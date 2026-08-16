@@ -250,9 +250,9 @@ class StackedMobileRepository(
     private fun resolveSingleSvg(style: Int, customSvg: String): String {
         val resolvedStyle = if ((style == 2 && customSvg.isBlank()) || style !in 0..3) 0 else style
         return when (resolvedStyle) {
-            0 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_HYPER_OS_SINGLE)
-            1 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_IOS_SINGLE)
-            3 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_IOS27_SINGLE)
+            0 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_HYPER_OS_3_SINGLE)
+            1 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_IOS_26_SINGLE)
+            3 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_IOS_27_SINGLE)
             else -> customSvg // style == 2 时使用自定义的 SVG (从 RemoteFile 读出来的那个)
         }
     }
@@ -260,9 +260,9 @@ class StackedMobileRepository(
     private fun resolveStackedSvg(style: Int, customSvg: String): String {
         val resolvedStyle = if ((style == 2 && customSvg.isBlank()) || style !in 0..3) 0 else style
         return when (resolvedStyle) {
-            0 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_HYPER_OS_STACKED)
-            1 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_IOS_STACKED)
-            3 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_IOS27_STACKED)
+            0 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_HYPER_OS_3_STACKED)
+            1 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_IOS_26_STACKED)
+            3 -> getSvgFromAssets(Constants.ASSETS_SVG_SIGNAL_IOS_27_STACKED)
             else -> customSvg
         }
     }

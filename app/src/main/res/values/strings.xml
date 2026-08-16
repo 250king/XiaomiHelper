@@ -641,6 +641,8 @@
     <string name="icon_tuner_single_mobile_sim1">Custom SIM 1 signal icon</string>
     <string name="icon_tuner_single_mobile_sim2">Custom SIM 2 signal icon</string>
     <string name="icon_tuner_single_mobile_summary">Newly added icon, not system‑provided</string>
+    <string name="icon_tuner_custom_wifi">Custom WLAN icon</string>
+    <string name="icon_tuner_custom_wifi_tips" translatable="false">@string/ui_title_icon_detail_stacked_visibility</string>
     <string name="ui_title_icon_tuner_network">Network</string>
     <string name="icon_tuner_network_mobile">Mobile network</string>
     <string name="icon_tuner_network_no_sim">No SIM card</string>
@@ -787,6 +789,11 @@
     <string name="icon_detail_wifi_hide_activity">Hide WLAN activity</string>
     <string name="icon_detail_wifi_right_activity">Align WLAN activity to the right</string>
     <string name="icon_detail_wifi_hide_unavailable">Hide WLAN icon when unavailable</string>
+    <string name="icon_detail_wifi_signal_enabled">Enable custom WLAN signal icon</string>
+    <string name="icon_detail_wifi_signal_enabled_tips">Hides the system WLAN icon and adds a custom WLAN signal icon</string>
+    <string name="icon_detail_wifi_signal_style">WLAN signal icon style</string>
+    <string name="icon_detail_wifi_signal_style_hyperos2" translatable="false">HyperOS 2</string>
+    <string name="icon_detail_wifi_signal_style_custom_file">Custom WLAN signal icon</string>
     <!-- IconDetailPage - Battery -->
     <string name="icon_detail_battery_bar_style">Battery indicator (Status bar)</string>
     <string name="icon_detail_battery_cc_style">Battery indicator (Control center)</string>

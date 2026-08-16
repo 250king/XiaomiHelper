@@ -1,11 +1,8 @@
 package dev.lackluster.mihelper.hook.rules.systemui.mobile
 
 import android.content.Context
-import android.graphics.PorterDuff
 import android.graphics.drawable.Icon
-import android.widget.ImageView
 import com.highcapable.kavaref.KavaRef.Companion.resolve
-import com.highcapable.kavaref.condition.type.Modifiers
 import dev.lackluster.mihelper.BuildConfig
 import dev.lackluster.mihelper.data.Constants
 import dev.lackluster.mihelper.data.Constants.VARIABLE_FONT_DEFAULT_PATH
@@ -21,11 +18,11 @@ import dev.lackluster.mihelper.hook.rules.systemui.compat.IconControllerCompat
 import dev.lackluster.mihelper.hook.rules.systemui.compat.MutableStateFlowCompat
 import dev.lackluster.mihelper.hook.rules.systemui.compat.ReadonlyStateFlowCompat
 import dev.lackluster.mihelper.hook.rules.systemui.compat.TripleCompat
+import dev.lackluster.mihelper.hook.utils.HostExecutor
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.lazyGet
 import dev.lackluster.mihelper.hook.utils.d
 import dev.lackluster.mihelper.hook.utils.e
 import dev.lackluster.mihelper.hook.utils.toTyped
-import dev.lackluster.mihelper.hook.utils.HostExecutor
 import dev.lackluster.mihelper.utils.SystemProperties
 import java.io.FileInputStream
 import java.util.concurrent.ConcurrentHashMap
@@ -169,46 +166,6 @@ object StackedMobileIcon : StaticHooker() {
     }
 
     override fun onHook() {
-        // 强制着色来自动反色
-        "com.android.systemui.statusbar.StatusBarIconView".toClassOrNull()?.apply {
-            val fldSlot = resolve().firstFieldOrNull {
-                name = "mSlot"
-            }?.toTyped<String>()
-            val metSetDecorColor = resolve().firstMethodOrNull {
-                name = "setDecorColor"
-                parameters(Int::class)
-            }?.toTyped<Unit>()
-            val metGetTint = "com.android.systemui.statusbar.DarkIconDispatcherExt".toClassOrNull()?.resolve()?.firstMethodOrNull {
-                name = "getTint"
-                parameterCount = 3
-                modifiers(Modifiers.STATIC)
-            }?.toTyped<Int>()
-            resolve().firstMethodOrNull {
-                name = "updateLightDarkTint"
-            }?.hook {
-                val ori = proceed()
-                val iconView = thisObject as? ImageView
-                val slot = fldSlot?.get(thisObject)
-                if (iconView == null || slot == null) return@hook result(ori)
-                when (slot) {
-                    Constants.IconSlots.STACKED_MOBILE_TYPE, Constants.IconSlots.STACKED_MOBILE_ICON,
-                    Constants.IconSlots.SINGLE_MOBILE_SIM1, Constants.IconSlots.SINGLE_MOBILE_SIM2,
-                        -> {
-                        metGetTint?.invoke(
-                            null,
-                            getArg(0),
-                            iconView,
-                            getArg(2),
-                        )?.let { tint ->
-//                            iconView.imageTintList = ColorStateList.valueOf(tint)
-                            iconView.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
-                            metSetDecorColor?.invoke(iconView, tint)
-                        }
-                    }
-                }
-                result(ori)
-            }
-        }
         // 刷新图标的 Flow
         "com.android.systemui.statusbar.pipeline.mobile.ui.MobileUiAdapter".toClassOrNull()?.apply {
             val fldIconController = resolve().firstFieldOrNull {

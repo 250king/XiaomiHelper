@@ -35,13 +35,18 @@ object Constants {
     const val REMOTE_FILE_STACKED_MOBILE_TYPE_FONT = "stacked_signal_mobile_type_font.ttf"
     const val REMOTE_FILE_STACKED_SIGNAL_SINGLE = "stat_sys_stacked_signal_single.svg"
     const val REMOTE_FILE_STACKED_SIGNAL_STACKED = "stat_sys_stacked_signal_stacked.svg"
+    const val REMOTE_FILE_CUSTOM_WIFI_SIGNAL = "stat_sys_custom_wifi_signal.svg"
 
-    const val ASSETS_SVG_SIGNAL_HYPER_OS_SINGLE = "svg/Signal-HyperOS-Single.svg"
-    const val ASSETS_SVG_SIGNAL_HYPER_OS_STACKED = "svg/Signal-HyperOS-Stacked.svg"
-    const val ASSETS_SVG_SIGNAL_IOS_SINGLE = "svg/Signal-iOS-Single.svg"
-    const val ASSETS_SVG_SIGNAL_IOS_STACKED = "svg/Signal-iOS-Stacked.svg"
-    const val ASSETS_SVG_SIGNAL_IOS27_SINGLE = "svg/Signal-iOS27-Single.svg"
-    const val ASSETS_SVG_SIGNAL_IOS27_STACKED = "svg/Signal-iOS27-Stacked.svg"
+    const val ASSETS_SVG_SIGNAL_HYPER_OS_3_SINGLE = "svg/Signal-HyperOS3-Single.svg"
+    const val ASSETS_SVG_SIGNAL_HYPER_OS_3_STACKED = "svg/Signal-HyperOS3-Stacked.svg"
+    const val ASSETS_SVG_SIGNAL_IOS_26_SINGLE = "svg/Signal-iOS26-Single.svg"
+    const val ASSETS_SVG_SIGNAL_IOS_26_STACKED = "svg/Signal-iOS26-Stacked.svg"
+    const val ASSETS_SVG_SIGNAL_IOS_27_SINGLE = "svg/Signal-iOS27-Single.svg"
+    const val ASSETS_SVG_SIGNAL_IOS_27_STACKED = "svg/Signal-iOS27-Stacked.svg"
+    const val ASSETS_SVG_WIFI_HYPER_OS_3 = "svg/Wifi-HyperOS3.svg"
+    const val ASSETS_SVG_WIFI_HYPER_OS_2 = "svg/Wifi-HyperOS2.svg"
+    const val ASSETS_SVG_WIFI_IOS_26 = "svg/Wifi-iOS26.svg"
+    const val ASSETS_SVG_WIFI_IOS_27 = "svg/Wifi-iOS27.svg"
 
     const val CELLULAR_TYPE_LIST = ",G,E,3G,H,H+,4G,4G+,,LTE,5G,5G,5G+,5GA,5G"
 
@@ -76,6 +81,7 @@ object Constants {
         const val VOLUME = "volume"
 
         const val DEMO_MOBILE = "demo_mobile"
+        const val DEMO_WIFI = "demo_wifi"
 
         const val COMPOUND_ICON_STUB = "compound_stub"
         const val COMPOUND_ICON_REAL_LOCATION = "compound_location"
@@ -88,6 +94,8 @@ object Constants {
         const val STACKED_MOBILE_TYPE = "stacked_mobile_type"
         const val SINGLE_MOBILE_SIM1 = "single_mobile_sim1"
         const val SINGLE_MOBILE_SIM2 = "single_mobile_sim2"
+
+        const val CUSTOM_WIFI_SIGNAL = "custom_wifi_signal"
     }
 
     val STATUS_BAR_ICONS_DEFAULT = listOf(
@@ -97,7 +105,8 @@ object Constants {
         "hotspot", "sound_box_group", "stereo", "sound_box_screen", "sound_box", "wireless_headset",
         "zen", "volume", "dist_compute", "camera", "glasses", "car", "tv", "pc", "pad", "phone",
         "hd", "airplane", "mobile", IconSlots.DEMO_MOBILE, IconSlots.SINGLE_MOBILE_SIM1, IconSlots.SINGLE_MOBILE_SIM2,
-        IconSlots.STACKED_MOBILE_ICON, IconSlots.STACKED_MOBILE_TYPE, "no_sim", "wifi", "demo_wifi",
+        IconSlots.STACKED_MOBILE_ICON, IconSlots.STACKED_MOBILE_TYPE, "no_sim",
+        "wifi", IconSlots.DEMO_WIFI, IconSlots.CUSTOM_WIFI_SIGNAL
     )
 
     val STATUS_BAR_ICONS_SWAP = listOf(
@@ -106,7 +115,8 @@ object Constants {
         IconSlots.ALARM_CLOCK, "vpn", "ethernet", "handle_battery", "bluetooth", "bluetooth_handsfree_battery",
         "hotspot", "sound_box_group", "stereo", "sound_box_screen", "sound_box", "wireless_headset",
         "zen", "volume", "dist_compute", "camera", "glasses", "car", "tv", "pc", "pad", "phone",
-        "wifi", "demo_wifi", "hd", "airplane", "mobile", IconSlots.DEMO_MOBILE, IconSlots.SINGLE_MOBILE_SIM1, IconSlots.SINGLE_MOBILE_SIM2,
+        "wifi", IconSlots.DEMO_WIFI, IconSlots.CUSTOM_WIFI_SIGNAL, "hd", "airplane", "mobile",
+        IconSlots.DEMO_MOBILE, IconSlots.SINGLE_MOBILE_SIM1, IconSlots.SINGLE_MOBILE_SIM2,
         IconSlots.STACKED_MOBILE_ICON, IconSlots.STACKED_MOBILE_TYPE, "no_sim",
     )
 
@@ -285,8 +295,8 @@ object Constants {
             R.drawable.ic_stat_sys_wifi,
             R.string.icon_tuner_network_wifi
         ),
-        "demo_wifi" to StatusBarIconSlotWrap(
-            "demo_wifi",
+        IconSlots.DEMO_WIFI to StatusBarIconSlotWrap(
+            IconSlots.DEMO_WIFI,
             R.drawable.ic_stat_sys_wifi,
             R.string.icon_tuner_position_demo_wifi
         ),
@@ -314,6 +324,11 @@ object Constants {
             IconSlots.SINGLE_MOBILE_SIM2,
             R.drawable.ic_stat_sys_single_sim2,
             R.string.icon_tuner_single_mobile_sim2
+        ),
+        IconSlots.CUSTOM_WIFI_SIGNAL to StatusBarIconSlotWrap(
+            IconSlots.CUSTOM_WIFI_SIGNAL,
+            R.drawable.ic_stat_sys_wifi,
+            R.string.icon_tuner_custom_wifi
         ),
     )
 

@@ -50,7 +50,7 @@ private val wlanKeys: Set<PreferenceKey<*>> = setOf(
     Preferences.SystemUI.StatusBar.IconDetail.WIFI_PADDING_END_VAL,
     Preferences.SystemUI.StatusBar.IconDetail.HIDE_WIFI_ACTIVITY,
     Preferences.SystemUI.StatusBar.IconDetail.WIFI_ACTIVITY_RIGHT,
-    Preferences.SystemUI.StatusBar.IconDetail.HIDE_WIFI_UNAVAILABLE
+    Preferences.SystemUI.StatusBar.IconDetail.HIDE_WIFI_UNAVAILABLE,
 )
 
 private val batteryKeys: Set<PreferenceKey<*>> = setOf(
@@ -88,7 +88,7 @@ private val netSpeedKeys: Set<PreferenceKey<*>> = setOf(
 
 class IconDetailViewModel(
     private val fontRepo: FontRepository,
-    private val prefRepo: GlobalPreferencesRepository
+    private val prefRepo: GlobalPreferencesRepository,
 ) : ViewModel() {
     private val _pageUiState = MutableStateFlow(IconDetailPageState())
     val pageUiState = _pageUiState.asStateFlow()

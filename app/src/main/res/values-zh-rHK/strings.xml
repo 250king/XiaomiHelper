@@ -717,4 +717,9 @@
     <string name="others_intent_resolver_rerank_toast_invalid_pkg">包名不能為空</string>
     <string name="others_intent_resolver_rerank_toast_pkg_exist">應用程式%s的配置已存在</string>
     <string name="others_intent_resolver_rerank_toast_index_exist">索引%1$d已被應用程式%2$s佔用</string>
+    <string name="icon_tuner_custom_wifi">自訂 WLAN 圖示</string>
+    <string name="icon_detail_wifi_signal_enabled">啟用自訂 WLAN 訊號圖示</string>
+    <string name="icon_detail_wifi_signal_enabled_tips">將會隱藏系統 WLAN 圖示並加入自訂 WLAN 訊號圖示</string>
+    <string name="icon_detail_wifi_signal_style">WLAN 訊號圖示風格</string>
+    <string name="icon_detail_wifi_signal_style_custom_file">自訂 WLAN 訊號圖示</string>
 </resources>

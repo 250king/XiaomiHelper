@@ -37,6 +37,7 @@ object IconManager : StaticHooker() {
     private val iconPositionMode by Preferences.SystemUI.StatusBar.IconTuner.ICON_POSITION.lazyGet()
     private val iconPositionAutoReorder by Preferences.SystemUI.StatusBar.IconTuner.ICON_POSITION_REORDER.lazyGet()
     private val addStackedMobile by Preferences.SystemUI.StatusBar.StackedMobile.ENABLED.lazyGet()
+    private val addCustomWifiSignal by Preferences.SystemUI.StatusBar.CustomWifi.ENABLED.lazyGet()
     private val addCompoundIcon by lazy {
         Preferences.SystemUI.StatusBar.IconTuner.COMPOUND_ICON.get() in 1..3
     }
@@ -85,6 +86,12 @@ object IconManager : StaticHooker() {
                             IconSlots.SINGLE_MOBILE_SIM2,
                         )
                     )
+                }
+            }
+            if (addCustomWifiSignal && !slotsList.contains(IconSlots.CUSTOM_WIFI_SIGNAL)) {
+                val wifiIndex = slotsList.indexOf("wifi")
+                if (wifiIndex >= 0) {
+                    slotsList.add(wifiIndex + 1, IconSlots.CUSTOM_WIFI_SIGNAL)
                 }
             }
             if (leftContainer) {
@@ -205,6 +212,14 @@ object IconManager : StaticHooker() {
                 )
             }
         }
+        if (addCustomWifiSignal) {
+            handleIcon(
+                Preferences.SystemUI.StatusBar.CustomWifi.CUSTOM_WIFI_ICON,
+                IconSlots.CUSTOM_WIFI_SIGNAL,
+                statusBarBlockList,
+                controlCenterBlockList
+            )
+        }
         if (leftContainer) {
             leftSlots.forEach {
                 if (!statusBarBlockList.contains(it)) {
@@ -214,7 +229,7 @@ object IconManager : StaticHooker() {
         }
         fldRightBlockList.set(null, statusBarBlockList)
         fldControlCenterBlockList.set(null, controlCenterBlockList)
-        if (iconPositionMode != 0 || addCompoundIcon || iconPositionAutoReorder) {
+        if (iconPositionMode != 0 || addCompoundIcon || addCustomWifiSignal || iconPositionAutoReorder) {
             "com.android.systemui.statusbar.phone.ui.StatusBarIconList".toClassOrNull()?.apply {
                 resolve().firstConstructorOrNull {
                     parameters(Array<String>::class)
@@ -247,6 +262,11 @@ object IconManager : StaticHooker() {
             Preferences.SystemUI.StatusBar.StackedMobile.SINGLE_MOBILE_SIM2 -> {
                 val real = key.get()
                 if (real == 0) 4 else real
+            }
+
+            Preferences.SystemUI.StatusBar.CustomWifi.CUSTOM_WIFI_ICON -> {
+                val real = key.get()
+                if (real == 0) 1 else real
             }
             else -> key.get()
         }

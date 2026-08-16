@@ -60,6 +60,7 @@ object ResourcesUtils : ContextAwareHooker() {
     var stat_sys_ringer_silent = 0
     var stat_sys_ringer_vibrate = 0
     var stat_sys_signal_0 = 0
+    var stat_sys_wifi_signal_0 = 0
     var notification_icon_area = 0
     var status_bar_view_state_tag = 0
     var status_bar_icon_height = 0
@@ -128,6 +129,7 @@ object ResourcesUtils : ContextAwareHooker() {
         stat_sys_ringer_silent = "stat_sys_ringer_silent".toDrawableId()
         stat_sys_ringer_vibrate = "stat_sys_ringer_vibrate".toDrawableId()
         stat_sys_signal_0 = "stat_sys_signal_0".toDrawableId()
+        stat_sys_wifi_signal_0 = "stat_sys_wifi_signal_0".toDrawableId()
         notification_icon_area = "notification_icon_area".toId()
         status_bar_view_state_tag = "status_bar_view_state_tag".toId()
         status_bar_icon_height = "status_bar_icon_height".toDimenId()

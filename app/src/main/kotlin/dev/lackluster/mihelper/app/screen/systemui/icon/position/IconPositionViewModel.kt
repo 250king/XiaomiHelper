@@ -80,6 +80,13 @@ class IconPositionViewModel(
             insertIndex = mutableList.indexOf(icon) + 1
         }
 
+        if (!mutableList.contains(Constants.IconSlots.CUSTOM_WIFI_SIGNAL)) {
+            mutableList.add(
+                mutableList.indexOf(Constants.IconSlots.DEMO_WIFI).coerceAtLeast(0) + 1,
+                Constants.IconSlots.CUSTOM_WIFI_SIGNAL
+            )
+        }
+
         return mutableList
     }
 }

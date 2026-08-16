@@ -17,6 +17,14 @@ object HostExecutor {
         @Volatile var future: Future<*>? = null
     }
 
+    fun runOnMain(task: () -> Unit) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            task()
+        } else {
+            mainHandler.post(task)
+        }
+    }
+
     fun <T> execute(
         tag: Any,
         backgroundTask: () -> T?,

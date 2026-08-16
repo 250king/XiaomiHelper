@@ -28,12 +28,14 @@ import dev.lackluster.mihelper.R
 import dev.lackluster.mihelper.app.component.RebootActionItem
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.component.BatteryIcon
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.component.CustomSignalIcon
+import dev.lackluster.mihelper.app.screen.systemui.icon.detail.component.CustomWifiSignalIcon
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.component.MobileIcons
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.component.NetworkSpeedIcon
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.component.StandaloneTypeIcon
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.component.WifiIcon
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.tabs.StackedMobileAction
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.tabs.batteryTabContent
+import dev.lackluster.mihelper.app.screen.systemui.icon.detail.tabs.customWifiTabContent
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.tabs.mobileTabContent
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.tabs.netSpeedTabContent
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.tabs.stackedMobileTabContent
@@ -47,7 +49,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun IconDetailPage(
     viewModel: IconDetailViewModel = koinViewModel(),
-    stackedVM: StackedMobileViewModel = koinViewModel()
+    stackedVM: StackedMobileViewModel = koinViewModel(),
+    customWifiVM: CustomWifiViewModel = koinViewModel(),
 ) {
     val hapticFeedback = LocalHapticFeedback.current
 
@@ -62,20 +65,29 @@ fun IconDetailPage(
     val stackedState by stackedVM.configState.collectAsState()
     val singleAnchor by stackedVM.singleAnchor.collectAsState()
     val stackedAnchor by stackedVM.stackedAnchor.collectAsState()
+    val customWifiUiState by customWifiVM.screenState.collectAsState()
+    val customWifiState by customWifiVM.configState.collectAsState()
+    val customWifiPictures by customWifiVM.pictures.collectAsState()
+    val customWifiSegmentCount by customWifiVM.segmentCount.collectAsState()
 
     val mobileState by viewModel.mobileState.collectAsState()
     val wlanState by viewModel.wlanState.collectAsState()
     val batteryState by viewModel.batteryState.collectAsState()
     val netSpeedState by viewModel.netSpeedState.collectAsState()
 
-    val isAnyLoading = svgUiState.isLoading || pageUiState.isLoading
-    val currentErrorMessage = svgUiState.errorDialogMessage ?: pageUiState.errorDialogMessage
+    val isAnyLoading = svgUiState.isLoading || customWifiUiState.isLoading || pageUiState.isLoading
+    val currentErrorMessage = svgUiState.errorDialogMessage
+        ?: customWifiUiState.errorDialogMessage
+        ?: pageUiState.errorDialogMessage
 
     val singleSvgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let { stackedVM.handleSvgFileUri(it, isStacked = false) }
     }
     val stackedSvgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let { stackedVM.handleSvgFileUri(it, isStacked = true) }
+    }
+    val customWifiSvgLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let(customWifiVM::handleSvgFileUri)
     }
     val fontPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) {
@@ -196,9 +208,16 @@ fun IconDetailPage(
                                 nativeTypefaceProvider = viewModel::getTypeface
                             )
                         }
-                        WifiIcon(
-                            state = wlanState,
-                        )
+                        if (customWifiState.enabled) {
+                            CustomWifiSignalIcon(
+                                picture = customWifiPictures[customWifiSegmentCount.toString()],
+                                state = customWifiState,
+                            )
+                        } else {
+                            WifiIcon(
+                                state = wlanState,
+                            )
+                        }
                         BatteryIcon(
                             batteryStyle = batteryState.styleControlCenter,
                             fallbackStyle = STYLE_TEXT_OUT,
@@ -234,6 +253,17 @@ fun IconDetailPage(
                 summary = stringResource(R.string.icon_tuner_stacked_mobile_tips),
             )
         }
+        itemPreferenceGroup(
+            key = "MOBILE_WLAN_SWITCH",
+            visible = (selectedTab == IconTab.WLAN)
+        ) {
+            SwitchPreference(
+                key = Preferences.SystemUI.StatusBar.CustomWifi.ENABLED,
+                icon = ImageIcon(R.drawable.ic_stat_sys_wifi),
+                title = stringResource(R.string.icon_detail_wifi_signal_enabled),
+                summary = stringResource(R.string.icon_detail_wifi_signal_enabled_tips),
+            )
+        }
         mobileTabContent(
             isVisible = (selectedTab == IconTab.MOBILE && !stackedState.enabled),
             mobileState = mobileState,
@@ -246,9 +276,14 @@ fun IconDetailPage(
             onAction = onAction
         )
         wlanTabContent(
-            isVisible = selectedTab == IconTab.WLAN,
+            isVisible = (selectedTab == IconTab.WLAN && !customWifiState.enabled),
             wlanState = wlanState,
             validateAndUpdateWifiStandardMap = viewModel::validateAndUpdateWifiStandardMap,
+        )
+        customWifiTabContent(
+            isVisible = (selectedTab == IconTab.WLAN && customWifiState.enabled),
+            state = customWifiState,
+            onImportSvg = { customWifiSvgLauncher.launch(arrayOf("*/*")) },
         )
         batteryTabContent(
             isVisible = selectedTab == IconTab.BATTERY,
@@ -273,6 +308,7 @@ fun IconDetailPage(
         cancelable = false,
         onDismissRequest = {
             stackedVM.dismissErrorDialog()
+            customWifiVM.dismissErrorDialog()
             viewModel.dismissErrorDialog()
         },
     )

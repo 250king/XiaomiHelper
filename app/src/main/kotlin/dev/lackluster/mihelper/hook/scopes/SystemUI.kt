@@ -5,6 +5,7 @@ import dev.lackluster.mihelper.hook.rules.systemui.compat.CommonClassUtils
 import dev.lackluster.mihelper.hook.rules.systemui.MonetOverlay
 import dev.lackluster.mihelper.hook.rules.systemui.ResourcesUtils
 import dev.lackluster.mihelper.hook.rules.systemui.StatusBarActions
+import dev.lackluster.mihelper.hook.rules.systemui.StatusBarIconTint
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.CarrierLabelFontWeight
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.ForceColorScheme
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.HideDisturbNotification
@@ -38,6 +39,7 @@ import dev.lackluster.mihelper.hook.rules.systemui.statusbar.WifiIcon
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.NotificationMaxNumber
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.RegionSampling
 import dev.lackluster.mihelper.hook.rules.systemui.mobile.StackedMobileIcon
+import dev.lackluster.mihelper.hook.rules.systemui.wifi.CustomWifiSignalIcon
 import dev.lackluster.mihelper.hook.rules.systemui.notif.SuppressFold
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.StatusBarTapGesture
 
@@ -48,6 +50,7 @@ object SystemUI : StaticHooker() {
         attach(MonetOverlay)
         attach(StatusBarActions)
         attach(PluginFactory)
+        attach(StatusBarIconTint)
 
         attach(LockscreenDoubleTapToSleep)
         attach(HideDisturbNotification)
@@ -86,6 +89,7 @@ object SystemUI : StaticHooker() {
         attach(RegionSampling)
         attach(StatusBarTapGesture)
         attach(WifiIcon)
+        attach(CustomWifiSignalIcon)
 //        attach(UnlockMultipleTask)
 //        attach(HideTopBar)
 //        attach(PadClockAnim)

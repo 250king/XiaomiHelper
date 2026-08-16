@@ -769,4 +769,9 @@
     <string name="cleaner_music_hide_tab_long_audio">隐藏听书</string>
     <string name="module_settings_entry_position_after_device">显示在“我的设备”之后</string>
     <string name="home_recent_clear_all">“清除全部”按钮</string>
+    <string name="icon_tuner_custom_wifi">自定义 WLAN 图标</string>
+    <string name="icon_detail_wifi_signal_enabled">启用自定义 WLAN 信号图标</string>
+    <string name="icon_detail_wifi_signal_enabled_tips">将会隐藏系统 WLAN 图标并添加自定义 WLAN 信号图标</string>
+    <string name="icon_detail_wifi_signal_style">WLAN 信号图标风格</string>
+    <string name="icon_detail_wifi_signal_style_custom_file">自定义 WLAN 信号图标风格</string>
 </resources>

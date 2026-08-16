@@ -508,6 +508,21 @@ object Preferences {
                 val SMALL_TYPE_SIZE = PreferenceKey("stacked_s_type_size", 7.159973f)
                 val SMALL_TYPE_FONT_WEIGHT = PreferenceKey("stacked_s_type_weight_val", 630)
             }
+
+            object CustomWifi {
+                val ENABLED = PreferenceKey("custom_wifi_signal_enabled", false)
+
+                val CUSTOM_WIFI_ICON = PreferenceKey("custom_wifi_signal_icon", 1)
+
+                val SIGNAL_SVG_STYLE = PreferenceKey("custom_wifi_signal_svg_style", 0)
+                val SIGNAL_SVG_NAME = PreferenceKey("custom_wifi_signal_svg_name", "")
+                val SIGNAL_ALPHA_FG = PreferenceKey("custom_wifi_signal_alpha_fg", 1.0f)
+                val SIGNAL_ALPHA_BG = PreferenceKey("custom_wifi_signal_alpha_bg", 0.4f)
+                val SIGNAL_SCALE = PreferenceKey("custom_wifi_signal_scale", 1.0f)
+                val SIGNAL_PADDING_START = PreferenceKey("custom_wifi_signal_padding_start", 0.0f)
+                val SIGNAL_PADDING_END = PreferenceKey("custom_wifi_signal_padding_end", 0.0f)
+
+            }
         }
 
         object MediaControl {

@@ -5,9 +5,11 @@ import dev.lackluster.mihelper.app.provider.AppPreferenceActions
 import dev.lackluster.mihelper.app.repository.FontRepository
 import dev.lackluster.mihelper.app.repository.GlobalPreferencesRepository
 import dev.lackluster.mihelper.app.repository.StackedMobileRepository
+import dev.lackluster.mihelper.app.repository.WifiSignalRepository
 import dev.lackluster.mihelper.app.screen.settings.ModuleSettingsViewModel
 import dev.lackluster.mihelper.app.screen.system.SystemFrameworkViewModel
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.IconDetailViewModel
+import dev.lackluster.mihelper.app.screen.systemui.icon.detail.CustomWifiViewModel
 import dev.lackluster.mihelper.app.screen.systemui.icon.position.IconPositionViewModel
 import dev.lackluster.mihelper.app.screen.systemui.icon.detail.StackedMobileViewModel
 import dev.lackluster.mihelper.app.screen.systemui.media.MediaControlViewModel
@@ -35,6 +37,7 @@ val appModule = module {
     singleOf(::GlobalPreferencesRepository) { createdAtStart() }
     singleOf(::FontRepository)
     singleOf(::StackedMobileRepository) { createdAtStart() }
+    singleOf(::WifiSignalRepository) { createdAtStart() }
     singleOf(::AppInfoRepository)
     singleOf(::AppPreferenceActions)
 
@@ -45,6 +48,7 @@ val appModule = module {
     viewModelOf(::SystemFrameworkViewModel)
     viewModelOf(::StatusBarFontViewModel)
     viewModelOf(::IconDetailViewModel)
+    viewModelOf(::CustomWifiViewModel)
     viewModelOf(::StackedMobileViewModel)
     viewModelOf(::IconPositionViewModel)
     viewModelOf(::MediaControlViewModel)

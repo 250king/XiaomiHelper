@@ -6,8 +6,60 @@ import com.caverock.androidsvg.RenderOptions
 import com.caverock.androidsvg.SVG
 import com.caverock.androidsvg.SVGParseException
 import com.caverock.androidsvg.SvgAnchorExtractor
+import kotlin.math.ceil
 
 object StackedMobileIconUtils {
+    fun parseWifiSignalSegmentCount(svg: String): Int? {
+        val ids = Regex("""id\s*=\s*['"](wifi_\d+)['"]""")
+            .findAll(svg)
+            .map { it.groupValues[1] }
+            .toList()
+        if (ids.size != ids.distinct().size) return null
+
+        val segmentIds = ids.mapNotNull { id ->
+            id.removePrefix("wifi_").toIntOrNull()?.let { number -> id to number }
+        }
+        if (segmentIds.isEmpty() || segmentIds.any { it.second !in 1..4 }) return null
+
+        val count = segmentIds.maxOf { it.second }
+        return count.takeIf { expected ->
+            segmentIds.map { it.second }.toSet() == (1..expected).toSet()
+        }
+    }
+
+    fun remapWifiSignalLevel(rawLevel: Int, segmentCount: Int): Int {
+        if (segmentCount !in 1..4) return 0
+        return ceil(rawLevel.coerceIn(0, 4) * segmentCount / 4.0).toInt()
+    }
+
+    fun generateWifiSignalPictures(
+        wifiSvg: String,
+        pictureCache: MutableMap<String, Picture>,
+        alphaFilled: Float,
+        alphaBackground: Float,
+    ): Int? {
+        val segmentCount = parseWifiSignalSegmentCount(wifiSvg) ?: return null
+        return try {
+            val baseSvg = SVG.getFromString(wifiSvg)
+            for (filledLevel in 0..segmentCount) {
+                val cssBuilder = StringBuilder()
+                for (index in 1..segmentCount) {
+                    val alpha = if (index <= filledLevel) alphaFilled else alphaBackground
+                    val id = "wifi_$index"
+                    cssBuilder.append("#$id { fill: #FFFFFF !important; fill-opacity: $alpha !important; } ")
+                    cssBuilder.append("#$id * { fill: #FFFFFF !important; fill-opacity: $alpha !important; } ")
+                }
+                pictureCache[filledLevel.toString()] = baseSvg.renderToPicture(
+                    RenderOptions().css(cssBuilder.toString())
+                )
+            }
+            segmentCount
+        } catch (e: SVGParseException) {
+            MLog.e(e)
+            null
+        }
+    }
+
     fun generateStackedSignalPictures(
         stackedMobileSVGString: String,
         pictureCache: MutableMap<String, Picture>,
