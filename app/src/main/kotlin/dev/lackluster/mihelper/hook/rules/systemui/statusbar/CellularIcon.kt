@@ -25,8 +25,11 @@ import dev.lackluster.mihelper.data.preference.Preferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
 import dev.lackluster.mihelper.hook.rules.systemui.compat.CommonClassUtils.readonlyStateFlowFalse
 import dev.lackluster.mihelper.hook.rules.systemui.compat.CommonClassUtils.readonlyStateFlowTrue
+import dev.lackluster.mihelper.hook.rules.systemui.compat.MutableStateFlowCompat
+import dev.lackluster.mihelper.hook.rules.systemui.compat.PairCompat
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.lazyGet
 import dev.lackluster.mihelper.hook.utils.toTyped
+import dev.lackluster.mihelper.utils.Device
 
 object CellularIcon : StaticHooker() {
     private val ignoreSysSettings by Preferences.SystemUI.StatusBar.IconTuner.IGNORE_SYS_SETTINGS.lazyGet()
@@ -85,7 +88,14 @@ object CellularIcon : StaticHooker() {
                         vowifiVisible?.set(thisObject, readonlyStateFlowFalse)
                     }
                     if (hideVolte) {
-                        volteVisibleGlobal?.set(thisObject, readonlyStateFlowFalse)
+                        if (Device.isInternationalBuild) {
+                            volteVisibleGlobal?.set(
+                                thisObject,
+                                MutableStateFlowCompat(PairCompat.create(obj1 = false, obj2 = false)).toReadonlyStateFlow()
+                            )
+                        } else {
+                            volteVisibleGlobal?.set(thisObject, readonlyStateFlowFalse)
+                        }
                     }
                     if (hideVolteNoService) {
                         volteNoService?.set(thisObject, readonlyStateFlowFalse)
