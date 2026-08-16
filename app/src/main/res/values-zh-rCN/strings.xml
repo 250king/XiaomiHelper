@@ -330,6 +330,12 @@
     <string name="cleaner_package_block_upload_app_info">阻止安装时上传应用信息</string>
     <string name="cleaner_package_remove_element">禁用多余的功能并移除相关界面</string>
     <string name="android_display_font_scale_200">200 (200%)</string>
+    <string name="android_display_rotation_suggestions">旋转建议指示器</string>
+    <string name="android_display_rotation_suggestions_tips">控制关闭自动旋转时显示的旋转建议指示器</string>
+    <string name="android_display_rotation_suggestions_force_enabled">强制启用</string>
+    <string name="android_display_rotation_suggestions_force_disabled">强制禁用</string>
+    <string name="android_display_rotation_suggestions_default">恢复默认</string>
+    <string name="android_display_rotation_suggestions_fail_msg">无法修改旋转建议指示器设置，请确认已授予 Root 权限。</string>
     <string name="ui_title_android_freeform">小窗</string>
     <string name="android_freeform_allow_more">允许打开更多小窗</string>
     <string name="android_freeform_allow_more_tips">修改小窗数量上限为255，可同时打开更多小窗</string>

@@ -32,7 +32,9 @@ import org.koin.androidx.compose.koinViewModel
 sealed interface SystemFrameworkUIAction {
     data class ShowToast(val message: UiText, val long: Boolean = false) : SystemFrameworkUIAction
     data class UpdateFontScale(val newValue: String) : SystemFrameworkUIAction
+    data class UpdateRotationSuggestions(val mode: RotationSuggestionsMode) : SystemFrameworkUIAction
     object OpenFontScaleSheet : SystemFrameworkUIAction
+    object OpenRotationSuggestionsSheet : SystemFrameworkUIAction
     object OpenFontSetting : SystemFrameworkUIAction
 }
 
@@ -45,6 +47,7 @@ fun SystemFrameworkPage(
     val context = LocalContext.current
 
     val fontScaleSheetVisibility = remember { mutableStateOf(false) }
+    val rotationSuggestionsSheetVisibility = remember { mutableStateOf(false) }
     val errorMsg = remember { mutableStateOf<UiText?>(null) }
 
     val isFontScaleOn = remember {
@@ -70,8 +73,14 @@ fun SystemFrameworkPage(
                     errorMsg.value = R.string.android_display_temp_font_scale_fail_msg.toUiText()
                 }
             }
+            is SystemFrameworkUIAction.UpdateRotationSuggestions -> {
+                viewModel.handleAction(UpdateRotationSuggestions(action.mode))
+            }
             SystemFrameworkUIAction.OpenFontScaleSheet -> {
                 fontScaleSheetVisibility.value = true
+            }
+            SystemFrameworkUIAction.OpenRotationSuggestionsSheet -> {
+                rotationSuggestionsSheetVisibility.value = true
             }
             SystemFrameworkUIAction.OpenFontSetting -> {
                 context.startActivity(
@@ -109,6 +118,15 @@ fun SystemFrameworkPage(
             isFontScaleOn.value = appSettingsActions.get(Preferences.System.ENABLE_FONT_SCALE)
         }
     )
+
+    RotationSuggestionsSheet(
+        show = rotationSuggestionsSheetVisibility.value,
+        onSelect = { mode ->
+            onAction(SystemFrameworkUIAction.UpdateRotationSuggestions(mode))
+            rotationSuggestionsSheetVisibility.value = false
+        },
+        onDismissRequest = { rotationSuggestionsSheetVisibility.value = false }
+    )
 }
 
 @Composable
@@ -142,6 +160,11 @@ private fun SystemFrameworkPageContent(
                 summary = stringResource(R.string.android_display_font_scale_tips),
                 value = stringResource(if (isFontScaleOn) R.string.common_on else R.string.common_off),
                 onClick = { onAction(SystemFrameworkUIAction.OpenFontScaleSheet) }
+            )
+            TextPreference(
+                title = stringResource(R.string.android_display_rotation_suggestions),
+                summary = stringResource(R.string.android_display_rotation_suggestions_tips),
+                onClick = { onAction(SystemFrameworkUIAction.OpenRotationSuggestionsSheet) }
             )
         }
 

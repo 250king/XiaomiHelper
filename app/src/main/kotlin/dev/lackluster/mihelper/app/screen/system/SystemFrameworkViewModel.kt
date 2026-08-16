@@ -19,6 +19,13 @@ data class SystemFrameworkState(
 sealed interface SystemFrameworkAction {
     object RefreshFontScale : SystemFrameworkAction
     data class UpdateFontScale(val scale: Float) : SystemFrameworkAction
+    data class UpdateRotationSuggestions(val mode: RotationSuggestionsMode) : SystemFrameworkAction
+}
+
+enum class RotationSuggestionsMode {
+    ForceEnabled,
+    ForceDisabled,
+    Default
 }
 
 class SystemFrameworkViewModel : ViewModel() {
@@ -60,6 +67,29 @@ class SystemFrameworkViewModel : ViewModel() {
                         _state.value = _state.value.copy(currentFontScale = action.scale)
                     } else {
                         _uiEvent.send(R.string.android_display_temp_font_scale_fail_msg.toUiText())
+                    }
+                }
+            }
+            is SystemFrameworkAction.UpdateRotationSuggestions -> {
+                val command = when (action.mode) {
+                    RotationSuggestionsMode.ForceEnabled -> {
+                        "settings put secure show_rotation_suggestions 1"
+                    }
+                    RotationSuggestionsMode.ForceDisabled -> {
+                        "settings put secure show_rotation_suggestions 0"
+                    }
+                    RotationSuggestionsMode.Default -> {
+                        "settings delete secure show_rotation_suggestions"
+                    }
+                }
+                viewModelScope.launch {
+                    val result = SystemCommander.execAsync(
+                        command = command,
+                        useRoot = true,
+                        silent = true
+                    )
+                    if (!result.isSuccess) {
+                        _uiEvent.send(R.string.android_display_rotation_suggestions_fail_msg.toUiText())
                     }
                 }
             }

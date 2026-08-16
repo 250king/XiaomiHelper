@@ -430,6 +430,12 @@
     <string name="android_display_font_scale_godzilla">Godzilla (145%)</string>
     <string name="android_display_font_scale_170">170 (170%)</string>
     <string name="android_display_font_scale_200">200 (200%)</string>
+    <string name="android_display_rotation_suggestions">Rotation suggestions</string>
+    <string name="android_display_rotation_suggestions_tips">Control the rotation suggestion indicator shown when auto-rotate is off</string>
+    <string name="android_display_rotation_suggestions_force_enabled">Force enable</string>
+    <string name="android_display_rotation_suggestions_force_disabled">Force disable</string>
+    <string name="android_display_rotation_suggestions_default">Restore default</string>
+    <string name="android_display_rotation_suggestions_fail_msg">Unable to modify rotation suggestion settings. Please ensure root privileges have been granted.</string>
     <string name="ui_title_android_freeform">Floating windows</string>
     <string name="android_freeform_restriction">Allow all apps to be in small window mode</string>
     <string name="android_freeform_restriction_tips">Ignore system blacklists and software\'s own disabling of small windows</string>
