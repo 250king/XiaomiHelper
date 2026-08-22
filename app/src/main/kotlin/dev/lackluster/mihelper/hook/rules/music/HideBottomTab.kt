@@ -20,7 +20,6 @@
 
 package dev.lackluster.mihelper.hook.rules.music
 
-import android.view.ViewGroup
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import dev.lackluster.mihelper.data.preference.Preferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
@@ -28,46 +27,20 @@ import dev.lackluster.mihelper.hook.utils.RemotePreferences.lazyGet
 import dev.lackluster.mihelper.hook.utils.toTyped
 
 object HideBottomTab : StaticHooker() {
+    private const val TOP_TAB_HOME_ID = 1
+    private const val TOP_TAB_KEGE_ID = 2
+    private const val TOP_TAB_LONG_AUDIO_ID = 3
+    private const val TOP_TAB_QUICK_PLAY_ID = 4
+
     private val hideLongAudio by Preferences.Music.HIDE_TAB_LONG_AUDIO.lazyGet()
     private val hideQuickPlay by Preferences.Music.HIDE_TAB_QUICK_PLAY.lazyGet()
     private val hideFreeMode by Preferences.Music.HIDE_TAB_FREE_MODE.lazyGet()
 
-    private val clzBottomNavigationViewBinding by "com.tencent.qqmusiclite.databinding.BottomNavigationViewBinding".lazyClassOrNull()
-    private val fldMenuViewLongAudio by lazy {
-        clzBottomNavigationViewBinding?.resolve()?.firstFieldOrNull {
-            name = "menuViewLongAudio"
-        }?.toTyped<Any>()
-    }
-    private val fldMenuViewQuickPlay by lazy {
-        clzBottomNavigationViewBinding?.resolve()?.firstFieldOrNull {
-            name = "menuViewQuickPlay"
-        }?.toTyped<Any>()
-    }
-    private val fldMenuViewFreeMode by lazy {
-        clzBottomNavigationViewBinding?.resolve()?.firstFieldOrNull {
-            name = "menuViewFreeMode"
-        }?.toTyped<Any>()
-    }
-    private val fldClRoot by lazy {
-        "com.tencent.qqmusiclite.databinding.ViewBottomNavItemBinding".toClassOrNull()?.resolve()?.firstFieldOrNull {
-            name = "clRoot"
-        }?.toTyped<ViewGroup>()
-    }
-    private val clzBottomNavigationView by "com.tencent.qqmusiclite.ui.BottomNavigationView".lazyClassOrNull()
-    private val fldBinding by lazy {
-        clzBottomNavigationView?.resolve()?.firstFieldOrNull {
-            name = "binding"
-        }?.toTyped<Any>()
-    }
-    private val fldMenuList by lazy {
-        clzBottomNavigationView?.resolve()?.firstFieldOrNull {
-            name = "menuList"
-        }?.toTyped<List<Any>>()
-    }
-    private val fldMenuItemViewList by lazy {
-        clzBottomNavigationView?.resolve()?.firstFieldOrNull {
-            name = "menuItemViewList"
-        }?.toTyped<List<Any>>()
+    private val clzTopTab by "com.tencent.qqmusiclite.data.dto.shelfcard2.TopTab".lazyClassOrNull()
+    private val fldTabId by lazy {
+        clzTopTab?.resolve()?.firstFieldOrNull {
+            name = "id"
+        }?.toTyped<Int>()
     }
 
     override fun onInit() {
@@ -75,43 +48,53 @@ object HideBottomTab : StaticHooker() {
     }
 
     override fun onHook() {
-        clzBottomNavigationView?.apply {
+        "com.tencent.qqmusiclite.util.ConciseModeManager".toClassOrNull()?.apply {
+            if (hideLongAudio) {
+                resolve().firstMethodOrNull {
+                    name = "shouldShowBottomLongAudioTab"
+                }?.hook {
+                    result(false)
+                }
+            }
+            if (hideQuickPlay) {
+                resolve().firstMethodOrNull {
+                    name = "shouldShowBottomQuickPlayTab"
+                }?.hook {
+                    result(false)
+                }
+            }
+            if (hideFreeMode) {
+                resolve().firstMethodOrNull {
+                    name = "shouldShowBottomFreeModeTab"
+                }?.hook {
+                    result(false)
+                }
+            }
+        }
+        "com.tencent.qqmusiclite.fragment.home.BaseHomeFragment".toClassOrNull()?.apply {
+            val metGetTabs = resolve().firstMethodOrNull {
+                name = "getTabs"
+            }?.toTyped<MutableList<Any?>>()
             resolve().firstMethodOrNull {
-                name = "initMenuItemViews"
+                name = "updateTabs"
             }?.hook {
-                val bottomBar = thisObject as? ViewGroup
-                val menuItemViewList = fldMenuItemViewList?.get(thisObject)
-                val menuList = fldMenuList?.get(thisObject)
-                val binding = fldBinding?.get(thisObject)
-                val bindingsToRemove = listOfNotNull(
-                    if (hideLongAudio) fldMenuViewLongAudio?.get(binding) else null,
-                    if (hideQuickPlay) fldMenuViewQuickPlay?.get(binding) else null,
-                    if (hideFreeMode) fldMenuViewFreeMode?.get(binding) else null,
-                )
-                val indexToRemove = buildList {
-                    bindingsToRemove.forEach {
-                        menuItemViewList?.indexOf(it)?.let { index ->
-                            add(index)
+                val ori = proceed()
+                val kegeEnabled = getArg(0) == true
+                metGetTabs?.invoke(thisObject)?.let { list ->
+                    val filtered = list.filter {
+                        val id = fldTabId?.get(it) ?: return@filter true
+                        when (id) {
+                            TOP_TAB_HOME_ID -> true
+                            TOP_TAB_KEGE_ID -> kegeEnabled
+                            TOP_TAB_LONG_AUDIO_ID -> !hideLongAudio
+                            TOP_TAB_QUICK_PLAY_ID -> !hideQuickPlay
+                            else -> true
                         }
                     }
+                    list.clear()
+                    list.addAll(filtered)
                 }
-                menuList?.filterIndexed { index, _ ->
-                    index !in indexToRemove
-                }?.toMutableList()?.let {
-                    fldMenuList?.set(thisObject, it)
-                }
-                menuItemViewList?.filterIndexed { index, any ->
-                    val hidden = index in indexToRemove
-                    if (hidden) {
-                        fldClRoot?.get(any)?.let {
-                            bottomBar?.removeView(it)
-                        }
-                    }
-                    !hidden
-                }?.toMutableList()?.let {
-                    fldMenuItemViewList?.set(thisObject, it)
-                }
-                result(proceed())
+                result(ori)
             }
         }
     }

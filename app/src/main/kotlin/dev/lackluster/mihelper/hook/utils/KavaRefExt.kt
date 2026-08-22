@@ -6,10 +6,11 @@ import com.highcapable.kavaref.resolver.MethodResolver
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import com.highcapable.kavaref.extension.makeAccessible
 
 internal class TypedField<T : Any, V>(private val rawField: Field) {
     init {
-        rawField.isAccessible = true
+        rawField.makeAccessible()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -24,7 +25,7 @@ internal class TypedField<T : Any, V>(private val rawField: Field) {
 
 internal class TypedMethod<T : Any, R>(private val rawMethod: Method) {
     init {
-        rawMethod.isAccessible = true
+        rawMethod.makeAccessible()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -37,7 +38,7 @@ internal class TypedMethod<T : Any, R>(private val rawMethod: Method) {
 
 internal class TypedConstructor<T : Any>(private val rawConstructor: Constructor<*>) {
     init {
-        rawConstructor.isAccessible = true
+        rawConstructor.makeAccessible()
     }
 
     @Suppress("UNCHECKED_CAST")

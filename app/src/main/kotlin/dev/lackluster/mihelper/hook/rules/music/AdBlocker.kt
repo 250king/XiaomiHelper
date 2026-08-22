@@ -69,6 +69,14 @@ object AdBlocker : StaticHooker() {
                 result(false)
             }
         }
+        // 简洁模式
+        "com.tencent.qqmusiclite.util.ConciseModeManager".toClassOrNull()?.apply {
+            resolve().firstMethodOrNull {
+                name = "isEnabled"
+            }?.hook {
+                result(true)
+            }
+        }
     }
 
     private fun handleHomePage() {
@@ -140,7 +148,7 @@ object AdBlocker : StaticHooker() {
             }?.toTyped<Any>()
             val metLoadMore = "com.tencent.qqmusiclite.fragment.home.HomeViewModel".toClassOrNull()?.resolve()?.firstMethodOrNull {
                 name = "loadMore"
-            }?.toTyped<Unit>()
+            }?.self
             val clzStatus = $$"com.tencent.qqmusic.business.timeline.ui.refreshable.LoadMoreFooterView$Status".toClassOrNull()
             val metValueOf = clzStatus?.resolve()?.firstMethodOrNull {
                 name = "valueOf"
@@ -404,6 +412,12 @@ object AdBlocker : StaticHooker() {
                 }?.hook {
                     result(null)
                 }
+            }
+            // 金币入口
+            resolve().firstMethodOrNull {
+                name = "canShowMineCoinAreaByLocalState"
+            }?.hook {
+                result(false)
             }
         }
         "com.tencent.qqmusiclite.ui.VipLabelView".toClassOrNull()?.apply {
