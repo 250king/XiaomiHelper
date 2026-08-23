@@ -635,6 +635,7 @@ object Preferences {
         val SEARCH_USE_BROWSER = PreferenceKey("taplus_use_browser", false)
         val SEARCH_ENGINE = PreferenceKey("taplus_search_engine", 0)
         val CUSTOM_SEARCH_URL = PreferenceKey("taplus_search_url", "")
+        val XIAOAI_INTEGRATION = PreferenceKey("taplus_xiaoi_integration", false)
     }
 
     object Themes {

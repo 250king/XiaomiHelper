@@ -780,4 +780,7 @@
     <string name="icon_detail_wifi_signal_enabled_tips">将会隐藏系统 WLAN 图标并添加自定义 WLAN 信号图标</string>
     <string name="icon_detail_wifi_signal_style">WLAN 信号图标风格</string>
     <string name="icon_detail_wifi_signal_style_custom_file">自定义 WLAN 信号图标风格</string>
+    <string name="others_taplus_xiaoai_integration_tips">触发时显示超级小爱卡片，并在文本和图像识别面板增加“贴背屏”入口</string>
+    <string name="others_taplus_rear_screen">背屏</string>
+    <string name="others_taplus_xiaoai_integration">超级小爱集成</string>
 </resources>

@@ -247,6 +247,11 @@ private fun OthersPageContent(
                     )
                 }
             }
+            SwitchPreference(
+                title = stringResource(R.string.others_taplus_xiaoai_integration),
+                summary = stringResource(R.string.others_taplus_xiaoai_integration_tips),
+                key = Preferences.Taplus.XIAOAI_INTEGRATION
+            )
         }
         itemPreferenceGroup(
             titleRes = R.string.ui_title_others_settings

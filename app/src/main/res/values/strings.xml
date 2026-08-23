@@ -555,6 +555,9 @@
     <string name="others_settings_quick_per_install">Grant the \"Install unknown apps\" permission</string>
     <string name="others_settings_quick_per_tips">Go directly to the switch that grants this permission to a specific app, instead of the list of apps associated with this permission.</string>
     <string name="ui_title_others_taplus" translatable="false">@string/scope_taplus</string>
+    <string name="others_taplus_xiaoai_integration">Xiaomi Hyper XiaoAi Integration</string>
+    <string name="others_taplus_xiaoai_integration_tips">Displays a Xiaomi Hyper XiaoAi card when triggered, and adds Pin to Rear Screen actions for text and image recognition.</string>
+    <string name="others_taplus_rear_screen">Rear display</string>
     <string name="ui_title_others_updater" translatable="false">@string/scope_updater</string>
     <string name="others_updater_block_dialog">Block \"Install automatically?\" popup</string>
     <string name="others_updater_disable_validation">Remove OTA validation</string>

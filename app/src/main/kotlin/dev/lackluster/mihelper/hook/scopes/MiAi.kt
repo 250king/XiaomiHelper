@@ -4,6 +4,7 @@ import dev.lackluster.mihelper.data.preference.Preferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
 import dev.lackluster.mihelper.hook.rules.miai.CustomSearch
 import dev.lackluster.mihelper.hook.rules.miai.HideWatermark
+import dev.lackluster.mihelper.hook.rules.miai.RearScreenPin
 import dev.lackluster.mihelper.hook.rules.shared.FuckAIVS
 
 object MiAi : StaticHooker() {
@@ -14,6 +15,7 @@ object MiAi : StaticHooker() {
     override fun onInit() {
         attach(CustomSearch)
         attach(HideWatermark)
+        attach(RearScreenPin)
         attach(fuckAIVS)
     }
 }
