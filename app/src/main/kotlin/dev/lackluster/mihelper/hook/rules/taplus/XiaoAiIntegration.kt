@@ -209,6 +209,12 @@ object XiaoAiIntegration : StaticHooker() {
             val fldCopy = resolve().firstFieldOrNull {
                 name = "mCopy"
             }?.toTyped<TextView>()
+            val fldSegmentAdapter = resolve().firstFieldOrNull {
+                name = "mSegmentAdapter"
+            }?.toTyped<Any>()
+            val metGetSelectedWords = "com.miui.contentextension.text.adapter.TaplusSegmentAdapter".toClassOrNull()?.resolve()?.firstMethodOrNull {
+                name = "getSelectedWords"
+            }?.toTyped<String>()
             resolve().firstConstructorOrNull {
                 parameterCount = 3
             }?.hook {
@@ -238,9 +244,9 @@ object XiaoAiIntegration : StaticHooker() {
                         setCompoundDrawablesRelative(icon, null, null, null)
 
                         setOnClickListener {
-                            val text = runCatching {
-                                card.javaClass.getMethod("getSelectedWords").invoke(card) as? String
-                            }.getOrNull()
+                            val text = fldSegmentAdapter?.get(card)?.let { adapter ->
+                                metGetSelectedWords?.invoke(adapter)
+                            }
                             text?.takeIf(String::isNotBlank)?.let { selected ->
                                 sendRearScreenPin(context.applicationContext, RearScreenPin.TYPE_TEXT, selected)
                             }
