@@ -8,7 +8,9 @@ import dev.lackluster.mihelper.hook.rules.android.DarkModeForAll
 import dev.lackluster.mihelper.hook.rules.android.DisableWakePathChecker
 import dev.lackluster.mihelper.hook.rules.android.FCMSystemFix
 import dev.lackluster.mihelper.hook.rules.android.FontScale
+import dev.lackluster.mihelper.hook.rules.android.PasskeySystemFix
 import dev.lackluster.mihelper.hook.rules.android.RemoveFreeformRestriction
+import dev.lackluster.mihelper.hook.rules.shared.XiaomiBrowserRedirect
 
 object Android : StaticHooker() {
     override fun onInit() {
@@ -20,5 +22,7 @@ object Android : StaticHooker() {
         attach(FCMSystemFix)
         attach(AllowScreenshot)
         attach(AllowThirdPartyTheme)
+        attach(PasskeySystemFix)
+        attach(XiaomiBrowserRedirect)
     }
 }
