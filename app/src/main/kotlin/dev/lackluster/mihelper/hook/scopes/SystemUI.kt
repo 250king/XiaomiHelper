@@ -7,6 +7,7 @@ import dev.lackluster.mihelper.hook.rules.systemui.ResourcesUtils
 import dev.lackluster.mihelper.hook.rules.systemui.StatusBarActions
 import dev.lackluster.mihelper.hook.rules.systemui.StatusBarIconTint
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.CarrierLabelFontWeight
+import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.DisableUnlockByBleToast
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.ForceColorScheme
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.HideDisturbNotification
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.KeepNotification
@@ -58,6 +59,7 @@ object SystemUI : StaticHooker() {
         attach(StatusBarClockContainer)
         attach(CarrierLabelFontWeight)
         attach(ForceColorScheme)
+        attach(DisableUnlockByBleToast)
 
         attach(CustomBackground)
         attach(CustomLayout)
