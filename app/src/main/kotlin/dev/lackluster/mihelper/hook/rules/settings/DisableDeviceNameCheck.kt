@@ -30,7 +30,7 @@ object DisableDeviceNameCheck : StaticHooker() {
                     return@hook result(proceed())
                 }
                 val original = runCatching { internationalField.getBoolean(null) }.getOrDefault(false)
-                try {
+                return@hook try {
                     PasskeyUnsafe.setStaticBoolean(internationalField, true)
                     result(proceed())
                 } finally {
