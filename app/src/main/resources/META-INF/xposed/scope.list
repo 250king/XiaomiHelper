@@ -27,5 +27,6 @@ com.xiaomi.finddevice
 com.xiaomi.market
 com.xiaomi.mirror
 com.xiaomi.misettings
+com.xiaomi.simactivate.service
 com.xiaomi.trustservice
 miui.systemui.plugin
