@@ -32,6 +32,19 @@ object PasskeySystemFix : StaticHooker() {
     }
 
     private fun hookRequestSession() {
+        // HyperPasskey deoptimizes these callers because ART may inline RequestSession creation.
+        listOf(
+            "com.android.server.credentials.ProviderGetSession",
+            "com.android.server.credentials.ProviderCreateSession",
+        ).forEach { className ->
+            className.toClassOrNull()?.declaredMethods
+                ?.filter { it.name == "createNewSession" }
+                ?.forEach { method ->
+                    method.isAccessible = true
+                    runCatching { module.deoptimize(method) }
+                }
+        }
+
         val clazz = "com.android.server.credentials.RequestSession".toClassOrNull() ?: return
         val hybridField = runCatching {
             clazz.getDeclaredField("mHybridService").apply { isAccessible = true }
