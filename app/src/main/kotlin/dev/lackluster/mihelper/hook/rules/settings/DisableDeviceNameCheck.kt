@@ -27,8 +27,7 @@ object DisableDeviceNameCheck : StaticHooker() {
                 name = methodName
             }?.hook {
                 if (internationalField == null) {
-                    result(proceed())
-                    return@hook
+                    return@hook result(proceed())
                 }
                 val original = runCatching { internationalField.getBoolean(null) }.getOrDefault(false)
                 try {
