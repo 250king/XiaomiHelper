@@ -3,6 +3,7 @@ package dev.lackluster.mihelper.hook.rules.settings
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
+import dev.lackluster.mihelper.hook.utils.PasskeyUnsafe
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
 import dev.lackluster.mihelper.hook.utils.toClassOrNull
 
@@ -32,10 +33,10 @@ object DisableDeviceNameCheck : StaticHooker() {
                 }
                 val original = runCatching { internationalField.getBoolean(null) }.getOrDefault(false)
                 try {
-                    internationalField.setBoolean(null, true)
+                    PasskeyUnsafe.setStaticBoolean(internationalField, true)
                     result(proceed())
                 } finally {
-                    runCatching { internationalField.setBoolean(null, original) }
+                    runCatching { PasskeyUnsafe.setStaticBoolean(internationalField, original) }
                 }
             }
         }
