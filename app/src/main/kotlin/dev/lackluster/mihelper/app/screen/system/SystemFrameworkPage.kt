@@ -26,6 +26,7 @@ import dev.lackluster.mihelper.app.state.UiText
 import dev.lackluster.mihelper.app.utils.showToast
 import dev.lackluster.mihelper.app.utils.toUiText
 import dev.lackluster.mihelper.data.Scope
+import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.data.preference.Preferences
 import org.koin.androidx.compose.koinViewModel
 
@@ -192,6 +193,31 @@ private fun SystemFrameworkPageContent(
                 key = Preferences.System.DISABLE_FORCE_DARK_WHITELIST,
                 title = stringResource(R.string.android_others_force_dark),
                 summary = stringResource(R.string.android_others_force_dark_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.ALLOW_SCREENSHOT,
+                title = "Allow screenshots in secure apps",
+                summary = "Bypass FLAG_SECURE in the Android window manager."
+            )
+            SwitchPreference(
+                key = ParityPreferences.DISABLE_DEVICE_NAME_CHECK,
+                title = "Disable device-name sensitive-word check",
+                summary = "Applies to device, hotspot and Bluetooth name validation in Settings."
+            )
+            SwitchPreference(
+                key = ParityPreferences.ALLOW_THIRD_PARTY_THEME,
+                title = "Allow third-party themes",
+                summary = "Treat theme packages as legal only while the system ThemeReceiver validates them."
+            )
+            SwitchPreference(
+                key = ParityPreferences.HIDE_BLUETOOTH_UNLOCK_TOAST,
+                title = "Hide Bluetooth unlock toast",
+                summary = "Suppress only the SystemUI toast shown after a Bluetooth-device unlock."
+            )
+            SwitchPreference(
+                key = ParityPreferences.DISABLE_ROAMING_SIM_ACTIVATION,
+                title = "Disable SIM activation while roaming",
+                summary = "Skip Xiaomi activation receivers for a mainland-China SIM when it is roaming."
             )
         }
     }
