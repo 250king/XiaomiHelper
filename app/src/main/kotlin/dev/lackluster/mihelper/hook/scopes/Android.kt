@@ -2,6 +2,8 @@ package dev.lackluster.mihelper.hook.scopes
 
 import dev.lackluster.mihelper.hook.base.StaticHooker
 import dev.lackluster.mihelper.hook.rules.android.AllowMoreFreeform
+import dev.lackluster.mihelper.hook.rules.android.AllowScreenshot
+import dev.lackluster.mihelper.hook.rules.android.AllowThirdPartyTheme
 import dev.lackluster.mihelper.hook.rules.android.DarkModeForAll
 import dev.lackluster.mihelper.hook.rules.android.DisableWakePathChecker
 import dev.lackluster.mihelper.hook.rules.android.FCMSystemFix
@@ -16,5 +18,7 @@ object Android : StaticHooker() {
         attach(FontScale)
         attach(DisableWakePathChecker)
         attach(FCMSystemFix)
+        attach(AllowScreenshot)
+        attach(AllowThirdPartyTheme)
     }
 }
