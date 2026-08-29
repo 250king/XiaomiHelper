@@ -74,7 +74,7 @@ object FCMSystemFix : StaticHooker() {
                 name = "triggerGMSLimitAction"
                 parameterCount = 1
             }?.hook {
-                val newArgs = args.toTypedArray()
+                val newArgs = args.copyOf()
                 newArgs[0] = false
                 result(proceed(newArgs))
             }
