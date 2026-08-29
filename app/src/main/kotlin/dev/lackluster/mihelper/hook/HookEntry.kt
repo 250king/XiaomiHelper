@@ -34,6 +34,7 @@ import dev.lackluster.mihelper.hook.scopes.MiuiHome
 import dev.lackluster.mihelper.hook.scopes.Music
 import dev.lackluster.mihelper.hook.scopes.RemoteController
 import dev.lackluster.mihelper.hook.scopes.Settings
+import dev.lackluster.mihelper.hook.scopes.SimActivate
 import dev.lackluster.mihelper.hook.scopes.SystemUIPlugin
 import dev.lackluster.mihelper.hook.utils.RemotePreferences
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
@@ -122,6 +123,7 @@ class HookEntry : XposedModule() {
         Scope.TAPLUS -> Taplus
         Scope.THEMES -> Themes
         Scope.UPDATER -> Updater
+        "com.xiaomi.simactivate.service" -> SimActivate
         else -> null
     }
 
