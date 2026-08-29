@@ -37,6 +37,9 @@ object DisableDeviceNameCheck : StaticHooker() {
                     runCatching { PasskeyUnsafe.setStaticBoolean(internationalField, original) }
                 }
             }
+            className.toClassOrNull()?.declaredMethods
+                ?.filter { it.name == methodName }
+                ?.forEach { method -> runCatching { module.deoptimize(method) } }
         }
 
         hookWithInternationalBuild("com.android.settings.MiuiDeviceNameEditFragment", "onSave")

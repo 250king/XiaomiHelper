@@ -86,7 +86,7 @@ object FCMSystemFix : StaticHooker() {
                     this@apply.getDeclaredField("mGmsLimitEnabled").apply { isAccessible = true }
                         .setBoolean(thisObject, false)
                 }
-                result(proceed())
+                result(null)
             }
         }
     }
@@ -121,7 +121,7 @@ object FCMSystemFix : StaticHooker() {
                 name = "checkApplicationAutoStart"
                 parameterCount = 3
             }?.hook {
-                val record = getArg(1)
+                val record = args.firstOrNull { broadcastRecordClass.isInstance(it) }
                 val callerPackage = runCatching { callerPackageField.get(record) as? String }.getOrNull()
                 val intent = runCatching { intentField.get(record) as? Intent }.getOrNull()
                 val targetPackage = intent?.`package` ?: intent?.component?.packageName

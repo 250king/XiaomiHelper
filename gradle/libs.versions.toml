@@ -7,7 +7,7 @@ project-app-packageName = "dev.lackluster.mihelper"
 project-app-versionName = "26.05"
 project-app-versionCode = "26050"
 
-androidGradlePlugin = "9.2.1"
+androidGradlePlugin = "9.3.2"
 kotlin = "2.3.21"
 ksp = "2.3.7"
 hiddenapibypass = "6.1"

@@ -6,6 +6,7 @@
 
 package dev.lackluster.mihelper.hook.utils
 
+import android.annotation.SuppressLint
 import android.graphics.Point
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -46,6 +47,22 @@ object PasskeyUnsafe {
             Any::class.java,
             Long::class.javaPrimitiveType!!,
             Boolean::class.javaPrimitiveType!!,
+        )
+    }
+    private val getIntVolatileMethod: Method by lazy {
+        unsafeClass.getMethod(
+            "getIntVolatile",
+            Any::class.java,
+            Long::class.javaPrimitiveType!!,
+        )
+    }
+    private val compareAndSwapIntMethod: Method by lazy {
+        unsafeClass.getMethod(
+            "compareAndSwapInt",
+            Any::class.java,
+            Long::class.javaPrimitiveType!!,
+            Int::class.javaPrimitiveType!!,
+            Int::class.javaPrimitiveType!!,
         )
     }
     private val putObjectMethod: Method by lazy {
@@ -95,6 +112,23 @@ object PasskeyUnsafe {
         }
     }
 
+    fun setBoolean(field: Field, target: Any, value: Boolean) {
+        runCatching {
+            field.isAccessible = true
+            field.setBoolean(target, value)
+        }.onSuccess { return }
+
+        resolveField(field, target)
+        val offset = getInt(field, fieldOffsetOffset).toLong()
+        if (Modifier.isStatic(field.modifiers)) {
+            putBoolean(field.declaringClass, offset, value)
+        } else if (Modifier.isVolatile(field.modifiers)) {
+            putBooleanVolatile(target, offset, value)
+        } else {
+            putBoolean(target, offset, value)
+        }
+    }
+
     private fun resolveField(field: Field, target: Any?) {
         runCatching {
             field.isAccessible = true
@@ -124,6 +158,25 @@ object PasskeyUnsafe {
         putObjectVolatileMethod.invoke(unsafe, target, offset, value)
     }
 
+    private fun putBooleanVolatile(target: Any, offset: Long, value: Boolean) {
+        val alignedOffset = offset and 3L.inv()
+        val shift = ((offset - alignedOffset) * 8).toInt()
+        val byteMask = 0xff shl shift
+        while (true) {
+            val oldValue = (getIntVolatileMethod.invoke(unsafe, target, alignedOffset) as Number).toInt()
+            val newValue = (oldValue and byteMask.inv()) or ((if (value) 1 else 0) shl shift)
+            val swapped = compareAndSwapIntMethod.invoke(
+                unsafe,
+                target,
+                alignedOffset,
+                oldValue,
+                newValue,
+            ) as Boolean
+            if (swapped) return
+        }
+    }
+
+    @SuppressLint("SoonBlockedPrivateApi")
     private fun findFieldOffsetOffset(): Long {
         runCatching {
             val offsetField = Field::class.java.getDeclaredField("offset")

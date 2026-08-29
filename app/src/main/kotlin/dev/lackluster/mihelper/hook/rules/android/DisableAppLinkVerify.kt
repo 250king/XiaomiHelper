@@ -1,3 +1,9 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * This file is part of XiaomiHelper project.
+ */
+
 package dev.lackluster.mihelper.hook.rules.android
 
 import dev.lackluster.mihelper.data.preference.ParityPreferences
@@ -10,6 +16,7 @@ import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
  * being forced down the domain-verification path.
  *
  * Adapted from HyperCeiler AppLinkVerify / tehcneko Disable app link verify.
+ * Restores the pre-Android 12 resolver behaviour for unverified web links.
  */
 object DisableAppLinkVerify : StaticHooker() {
     override fun onInit() {
@@ -17,11 +24,16 @@ object DisableAppLinkVerify : StaticHooker() {
     }
 
     override fun onHook() {
-        val clazz = "com.android.server.pm.verify.domain.DomainVerificationUtils".toClassOrNull() ?: return
-        clazz.declaredMethods
-            .filter { it.name == "isDomainVerificationIntent" }
-            .forEach { method ->
+        "com.android.server.pm.verify.domain.DomainVerificationUtils"
+            .toClassOrNull()
+            ?.declaredMethods
+            ?.filter { method ->
+                method.name == "isDomainVerificationIntent" &&
+                    method.returnType == Boolean::class.javaPrimitiveType
+            }
+            ?.forEach { method ->
                 method.isAccessible = true
+                runCatching { module.deoptimize(method) }
                 method.hook { result(false) }
             }
     }

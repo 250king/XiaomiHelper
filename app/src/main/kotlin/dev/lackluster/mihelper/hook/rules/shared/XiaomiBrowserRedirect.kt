@@ -22,6 +22,9 @@ import dev.lackluster.mihelper.data.Scope
 import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
+import java.lang.reflect.Modifier
+import java.util.Collections
+import java.util.IdentityHashMap
 
 /**
  * Prevent Xiaomi components from forcing web links into Xiaomi Browser or its Market download page.
@@ -86,6 +89,7 @@ object XiaomiBrowserRedirect : StaticHooker() {
             "com.xiaomi.voiceassistant.utils.b2",
             "com.xiaomi.voiceassistant.utils.f2",
             "com.xiaomi.voiceassistant.utils.s2",
+            "com.xiaomi.voiceassistant.utils.t2",
             "com.xiaomi.voiceassistant.smartaction.SmartActionHandler",
             "com.xiaomi.voiceassistant.screen.ScreenRecognitionManager",
         ),
@@ -121,6 +125,8 @@ object XiaomiBrowserRedirect : StaticHooker() {
         if (hookParam.packageName in earlyUrlSourcePackages) {
             hookEarlyUrlSources(hookParam.packageName)
         }
+        if (hookParam.packageName == Scope.AI_ENGINE) hookAiEngineInstallCheck()
+        if (hookParam.packageName == Scope.MI_AI) hookVoiceAssistAvailability()
     }
 
     private fun hookContextImpl() {
@@ -216,12 +222,14 @@ object XiaomiBrowserRedirect : StaticHooker() {
     /** Returns true when the original launch should be consumed. */
     private fun interceptStart(context: Context, intent: Intent, options: Bundle?): Boolean {
         rememberWebUrl(intent)
-        if (redirectGuard.get()) return false
+        if (redirectGuard.get() == true) return false
         if (!shouldIntercept(context.packageName, intent)) return false
 
         val targetUrl = recoverWebUri(intent) ?: recentUrl()
         if (targetUrl == null) {
-            return isBrowserDownloadIntent(intent)
+            // Never swallow a click merely because the original URL was lost. Keeping the
+            // Market fallback is preferable to turning the UI action into a no-op.
+            return false
         }
 
         val replacement = buildReplacementIntent(context, intent, targetUrl)
@@ -237,6 +245,7 @@ object XiaomiBrowserRedirect : StaticHooker() {
     }
 
     private fun shouldIntercept(callerPackage: String, intent: Intent): Boolean {
+        if (intent.action != Intent.ACTION_VIEW && intent.action != Intent.ACTION_MAIN) return false
         val data = intent.data ?: extractWebUri(intent) ?: return false
         val scheme = data.scheme?.lowercase() ?: return false
         val targetPackage = intent.`package`
@@ -248,6 +257,10 @@ object XiaomiBrowserRedirect : StaticHooker() {
         if (scheme == "market" && isBrowserDownloadIntent(intent)) return true
         if (scheme == "intent" && targetsBrowser) return true
         if (scheme.startsWith("mi") && (isBrowserDownloadIntent(intent) || recoverWrappedUri(intent) != null)) return true
+
+        // Xiaomi Market has internal http/https deep links. Do not rewrite those unless the
+        // intent explicitly targets Xiaomi Browser/Market (handled above).
+        if (isXiaomiMarket(callerPackage)) return false
 
         if ((scheme == "http" || scheme == "https") &&
             targetPackage == null && intent.component == null &&
@@ -291,18 +304,8 @@ object XiaomiBrowserRedirect : StaticHooker() {
         extractWebUri(intent)?.let { rememberWebUri(it) }
     }
 
-    private fun rememberWebUrlFromValue(value: Any?, depth: Int = 0) {
-        if (value == null || depth > 3) return
-        when (value) {
-            is Intent -> rememberWebUrl(value)
-            is Uri -> rememberWebUri(value)
-            is CharSequence -> parseWebUri(value.toString())?.let { rememberWebUri(it) }
-            is Bundle -> value.keySet().forEach { key ->
-                rememberWebUrlFromValue(runCatching { value.get(key) }.getOrNull(), depth + 1)
-            }
-            is Collection<*> -> value.take(24).forEach { rememberWebUrlFromValue(it, depth + 1) }
-            is Array<*> -> value.take(24).forEach { rememberWebUrlFromValue(it, depth + 1) }
-        }
+    private fun rememberWebUrlFromValue(value: Any?) {
+        extractWebUriFromValue(value)?.let(::rememberWebUri)
     }
 
     private fun rememberWebUri(uri: Uri) {
@@ -338,9 +341,7 @@ object XiaomiBrowserRedirect : StaticHooker() {
         val extras = intent.extras
         if (extras != null) {
             for (key in extras.keySet()) {
-                parseWebUri(runCatching { extras.get(key) as? String }.getOrNull())
-                    ?.takeIf { isLikelyUserWebUri(it) }
-                    ?.let { return it }
+                extractWebUriFromValue(bundleValue(extras, key))?.let { return it }
             }
         }
         return null
@@ -353,9 +354,7 @@ object XiaomiBrowserRedirect : StaticHooker() {
         val extras = intent.extras
         if (extras != null) {
             for (key in extras.keySet()) {
-                parseWebUri(runCatching { extras.get(key) as? String }.getOrNull())
-                    ?.takeIf { isLikelyUserWebUri(it) }
-                    ?.let { return it }
+                extractWebUriFromValue(bundleValue(extras, key))?.let { return it }
             }
         }
 
@@ -375,9 +374,86 @@ object XiaomiBrowserRedirect : StaticHooker() {
 
     private fun parseWebUri(raw: String?): Uri? {
         val value = raw?.trim().orEmpty()
-        if (!value.startsWith("http://") && !value.startsWith("https://")) return null
-        return runCatching { Uri.parse(value) }.getOrNull()
+        if (value.isEmpty()) return null
+        val decoded = runCatching { Uri.decode(value) }.getOrDefault(value)
+        val candidate = when {
+            decoded.startsWith("http://", true) || decoded.startsWith("https://", true) -> decoded
+            else -> Regex("""(?i)https?://[^\s\"'<>]+""")
+                .find(decoded)
+                ?.value
+                ?.trimEnd(')', ']', '}', ',', '.', ';')
+        } ?: return null
+        return runCatching { Uri.parse(candidate) }.getOrNull()
     }
+
+    private fun extractWebUriFromValue(
+        value: Any?,
+        depth: Int = 0,
+        visited: MutableSet<Any> = Collections.newSetFromMap(IdentityHashMap()),
+    ): Uri? {
+        if (value == null || depth > 4) return null
+        val direct = when (value) {
+            is Uri -> value.takeIf(::isLikelyUserWebUri)
+            is Intent -> {
+                if (!visited.add(value)) return null
+                value.data?.takeIf(::isLikelyUserWebUri)
+                    ?: value.extras?.keySet()?.asSequence()
+                        ?.mapNotNull {
+                            extractWebUriFromValue(bundleValue(value.extras!!, it), depth + 1, visited)
+                        }
+                        ?.firstOrNull()
+                    ?: value.clipData?.let { clip ->
+                        (0 until clip.itemCount).asSequence()
+                            .mapNotNull { index ->
+                                val item = clip.getItemAt(index)
+                                item.uri?.takeIf(::isLikelyUserWebUri)
+                                    ?: parseWebUri(item.text?.toString())?.takeIf(::isLikelyUserWebUri)
+                            }
+                            .firstOrNull()
+                    }
+            }
+            is CharSequence -> parseWebUri(value.toString())?.takeIf(::isLikelyUserWebUri)
+            is Bundle -> value.keySet().asSequence()
+                .mapNotNull { extractWebUriFromValue(bundleValue(value, it), depth + 1, visited) }
+                .firstOrNull()
+            is Collection<*> -> value.asSequence().take(24)
+                .mapNotNull { extractWebUriFromValue(it, depth + 1, visited) }
+                .firstOrNull()
+            is Array<*> -> value.asSequence().take(24)
+                .mapNotNull { extractWebUriFromValue(it, depth + 1, visited) }
+                .firstOrNull()
+            else -> null
+        }
+        if (direct != null || value is Uri || value is Intent || value is CharSequence ||
+            value is Bundle || value is Collection<*> || value is Array<*>) {
+            return direct
+        }
+        if (!visited.add(value)) return null
+        val className = value.javaClass.name
+        if (className.startsWith("java.") || className.startsWith("kotlin.") ||
+            className.startsWith("android.") || className.startsWith("androidx.") ||
+            className.startsWith("dalvik.")) {
+            return null
+        }
+        var current: Class<*>? = value.javaClass
+        while (current != null && current != Any::class.java) {
+            current.declaredFields
+                .asSequence()
+                .filterNot { Modifier.isStatic(it.modifiers) }
+                .forEach { field ->
+                    val nested = runCatching {
+                        field.isAccessible = true
+                        field.get(value)
+                    }.getOrNull()
+                    extractWebUriFromValue(nested, depth + 1, visited)?.let { return it }
+                }
+            current = current.superclass
+        }
+        return null
+    }
+
+    @Suppress("DEPRECATION")
+    private fun bundleValue(bundle: Bundle, key: String): Any? = runCatching { bundle.get(key) }.getOrNull()
 
     private fun isLikelyUserWebUri(uri: Uri): Boolean {
         val scheme = uri.scheme?.lowercase() ?: return false
@@ -451,6 +527,69 @@ object XiaomiBrowserRedirect : StaticHooker() {
                 }
             }
         }
+    }
+
+    private fun hookAiEngineInstallCheck() {
+        listOf("com.xiaomi.aicr.copydirect.util.SmartPasswordUtils", "i26")
+            .mapNotNull { it.toClassOrNull() }
+            .forEach { clazz ->
+                clazz.declaredMethods
+                    .filter { method ->
+                        method.returnType == Boolean::class.javaPrimitiveType &&
+                            method.parameterTypes.contentEquals(
+                                arrayOf(Context::class.java, String::class.java),
+                            )
+                    }
+                    .forEach { method ->
+                        method.isAccessible = true
+                        method.hook {
+                            val packageName = getArg(1) as? String
+                            if (isXiaomiBrowser(packageName)) result(true) else result(proceed())
+                        }
+                    }
+            }
+    }
+
+    private fun hookVoiceAssistAvailability() {
+        listOf(
+            "com.xiaomi.voiceassistant.utils.b2",
+            "com.xiaomi.voiceassistant.utils.f2",
+            "com.xiaomi.voiceassistant.utils.s2",
+            "com.xiaomi.voiceassistant.utils.t2",
+        ).mapNotNull { it.toClassOrNull() }
+            .forEach { clazz ->
+                clazz.declaredMethods
+                    .filter { method ->
+                        method.name == "isIntentAvailable" &&
+                            method.returnType == Boolean::class.javaPrimitiveType &&
+                            method.parameterTypes.contentEquals(
+                                arrayOf(Intent::class.java, Context::class.java),
+                            )
+                    }
+                    .forEach { method ->
+                        method.isAccessible = true
+                        method.hook {
+                            val intent = getArg(0) as? Intent ?: return@hook result(proceed())
+                            val context = getArg(1) as? Context ?: return@hook result(proceed())
+                            if (rewriteVoiceAssistBrowserIntent(context, intent)) result(true)
+                            else result(proceed())
+                        }
+                    }
+            }
+    }
+
+    private fun rewriteVoiceAssistBrowserIntent(context: Context, intent: Intent): Boolean {
+        val targetsBrowser = isXiaomiBrowser(intent.`package`) ||
+            isXiaomiBrowser(intent.component?.packageName)
+        if (!targetsBrowser) return false
+        val url = recoverWebUri(intent) ?: recentUrl() ?: return false
+        intent.action = Intent.ACTION_VIEW
+        intent.data = url
+        intent.component = null
+        intent.`package` = resolveDefaultBrowser(context)
+        intent.addCategory(Intent.CATEGORY_BROWSABLE)
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        return true
     }
 
     private fun fakePackageInfo(pkg: String): PackageInfo = PackageInfo().apply {

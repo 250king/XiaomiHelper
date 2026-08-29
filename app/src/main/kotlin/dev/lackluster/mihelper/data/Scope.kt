@@ -31,6 +31,7 @@ object Scope {
     const val SEARCH = "com.android.quicksearchbox"
     const val SECURITY_CENTER = "com.miui.securitycenter"
     const val SETTINGS = "com.android.settings"
+    const val SIM_ACTIVATE = "com.xiaomi.simactivate.service"
     const val SYSTEM_UI = "com.android.systemui"
     const val SYSTEM_UI_PLUGIN = "miui.systemui.plugin"
     const val TAPLUS = "com.miui.contentextension"

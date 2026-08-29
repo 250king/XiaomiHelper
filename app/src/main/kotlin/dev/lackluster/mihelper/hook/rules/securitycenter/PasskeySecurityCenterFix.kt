@@ -6,38 +6,51 @@
 
 package dev.lackluster.mihelper.hook.rules.securitycenter
 
-import android.content.ContentResolver
-import android.provider.Settings
 import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
+import dev.lackluster.mihelper.hook.utils.DexKit
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
+import org.luckypray.dexkit.query.enums.StringMatchType
 
 /** Prevent Security Center startup config from overwriting Android autofill / credential providers. */
 object PasskeySecurityCenterFix : StaticHooker() {
-    private val protectedKeys = setOf(
-        "autofill_service",
-        "credential_service",
-        "credential_service_primary",
-    )
+    override val requireDexKit: Boolean = true
+
+    private val autofillInitializers by lazy {
+        DexKit.findMethodsWithCache("passkey_securitycenter_autofill_initializer") {
+            matcher {
+                addUsingString("autofill_service", StringMatchType.Equals)
+            }
+        }
+    }
+
+    private val credentialInitializers by lazy {
+        DexKit.findMethodsWithCache("passkey_securitycenter_credential_initializer") {
+            matcher {
+                addUsingString("credential_service", StringMatchType.Equals)
+                addUsingString("credential_service_primary", StringMatchType.Equals)
+            }
+        }
+    }
 
     override fun onInit() {
-        updateSelfState(ParityPreferences.FIX_HYPEROS_PASSKEY.get())
+        val enabled = ParityPreferences.FIX_HYPEROS_PASSKEY.get()
+        updateSelfState(enabled)
+        if (enabled) {
+            autofillInitializers
+            credentialInitializers
+        }
     }
 
     override fun onHook() {
-        Settings.Secure::class.java.declaredMethods
-            .filter { method ->
-                method.name == "putString" &&
-                    method.parameterTypes.size >= 3 &&
-                    method.parameterTypes[0] == ContentResolver::class.java &&
-                    method.parameterTypes[1] == String::class.java
-            }
+        (autofillInitializers + credentialInitializers)
+            .mapNotNull { runCatching { it.getMethodInstance(classLoader) }.getOrNull() }
+            .distinct()
+            .filter { it.returnType == Void.TYPE }
             .forEach { method ->
                 method.isAccessible = true
-                method.hook {
-                    val key = getArg(1) as? String
-                    if (key in protectedKeys) result(true) else result(proceed())
-                }
+                runCatching { module.deoptimize(method) }
+                method.hook { result(null) }
             }
     }
 }

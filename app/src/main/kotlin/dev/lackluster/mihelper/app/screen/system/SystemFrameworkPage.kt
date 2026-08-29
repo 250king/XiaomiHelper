@@ -196,43 +196,48 @@ private fun SystemFrameworkPageContent(
             )
             SwitchPreference(
                 key = ParityPreferences.ALLOW_SCREENSHOT,
-                title = "Allow screenshots in secure apps",
-                summary = "Bypass FLAG_SECURE in the Android window manager."
+                title = stringResource(R.string.android_parity_allow_screenshot),
+                summary = stringResource(R.string.android_parity_allow_screenshot_tips),
             )
             SwitchPreference(
                 key = ParityPreferences.DISABLE_DEVICE_NAME_CHECK,
-                title = "Disable device-name sensitive-word check",
-                summary = "Applies to device, hotspot and Bluetooth name validation in Settings."
+                title = stringResource(R.string.android_parity_disable_device_name_check),
+                summary = stringResource(R.string.android_parity_disable_device_name_check_tips),
             )
             SwitchPreference(
                 key = ParityPreferences.ALLOW_THIRD_PARTY_THEME,
-                title = "Allow third-party themes",
-                summary = "Treat theme packages as legal only while the system ThemeReceiver validates them."
+                title = stringResource(R.string.android_parity_allow_third_party_theme),
+                summary = stringResource(R.string.android_parity_allow_third_party_theme_tips),
             )
             SwitchPreference(
                 key = ParityPreferences.HIDE_BLUETOOTH_UNLOCK_TOAST,
-                title = "Hide Bluetooth unlock toast",
-                summary = "Suppress only the SystemUI toast shown after a Bluetooth-device unlock."
+                title = stringResource(R.string.android_parity_hide_bluetooth_unlock_toast),
+                summary = stringResource(R.string.android_parity_hide_bluetooth_unlock_toast_tips),
             )
             SwitchPreference(
                 key = ParityPreferences.DISABLE_ROAMING_SIM_ACTIVATION,
-                title = "Disable SIM activation while roaming",
-                summary = "Skip Xiaomi activation receivers for a mainland-China SIM when it is roaming."
+                title = stringResource(R.string.android_parity_disable_roaming_sim_activation),
+                summary = stringResource(R.string.android_parity_disable_roaming_sim_activation_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.DISABLE_ROAMING_SIM_ACTIVATION_RADICAL,
+                title = stringResource(R.string.android_parity_disable_roaming_sim_activation_radical),
+                summary = stringResource(R.string.android_parity_disable_roaming_sim_activation_radical_tips),
             )
             SwitchPreference(
                 key = ParityPreferences.DISABLE_APP_LINK_VERIFY,
-                title = "Disable app link verification",
-                summary = "Let matching third-party apps participate in normal web-link intent resolution."
+                title = stringResource(R.string.android_parity_disable_app_link_verify),
+                summary = stringResource(R.string.android_parity_disable_app_link_verify_tips),
             )
             SwitchPreference(
                 key = ParityPreferences.REDIRECT_XIAOMI_BROWSER,
-                title = "Use default browser for Xiaomi links",
-                summary = "Prevent HyperOS components from forcing web links into Xiaomi Browser or its Market download page."
+                title = stringResource(R.string.android_parity_redirect_xiaomi_browser),
+                summary = stringResource(R.string.android_parity_redirect_xiaomi_browser_tips),
             )
             SwitchPreference(
                 key = ParityPreferences.FIX_HYPEROS_PASSKEY,
-                title = "Fix HyperOS passkeys",
-                summary = "Restore Credential Manager/passkey integration on CN HyperOS. Preinstalled Google Basic Services must be enabled."
+                title = stringResource(R.string.android_parity_fix_hyperos_passkey),
+                summary = stringResource(R.string.android_parity_fix_hyperos_passkey_tips),
             )
         }
     }

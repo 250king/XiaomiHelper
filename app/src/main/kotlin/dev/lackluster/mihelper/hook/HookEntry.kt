@@ -129,7 +129,7 @@ class HookEntry : XposedModule() {
         Scope.TAPLUS -> Taplus
         Scope.THEMES -> Themes
         Scope.UPDATER -> Updater
-        "com.xiaomi.simactivate.service" -> SimActivate
+        Scope.SIM_ACTIVATE -> SimActivate
         else -> null
     }
 

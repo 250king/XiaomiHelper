@@ -34,10 +34,24 @@ object PasskeySettingsFix : StaticHooker() {
         }
     }
 
+    private val checkChangedMethods by lazy {
+        DexKit.findMethodsWithCache("passkey_provider_check_changed") {
+            matcher {
+                name = "onCheckChanged"
+                returnType = "boolean"
+                paramCount = 2
+                paramTypes(null, "boolean")
+            }
+        }
+    }
+
     override fun onInit() {
         val enabled = ParityPreferences.FIX_HYPEROS_PASSKEY.get()
         updateSelfState(enabled)
-        if (enabled) leftSideClickMethods
+        if (enabled) {
+            leftSideClickMethods
+            checkChangedMethods
+        }
     }
 
     override fun onHook() {
@@ -93,7 +107,7 @@ object PasskeySettingsFix : StaticHooker() {
         hook {
             intlLock.lock()
             return@hook try {
-                val depth = intlDepth.get()
+                val depth = intlDepth.get() ?: 0
                 if (depth == 0) {
                     val previous = runCatching { internationalField.getBoolean(null) }.getOrDefault(false)
                     previousIntlValue.set(previous)
@@ -104,7 +118,7 @@ object PasskeySettingsFix : StaticHooker() {
                 val original = try {
                     proceed()
                 } finally {
-                    val nextDepth = intlDepth.get() - 1
+                    val nextDepth = (intlDepth.get() ?: 0) - 1
                     if (nextDepth <= 0) {
                         val previous = previousIntlValue.get()
                         previousIntlValue.remove()
@@ -142,6 +156,15 @@ object PasskeySettingsFix : StaticHooker() {
                 ?.apply { isAccessible = true }
                 ?.getInt(null)
         }.getOrNull() ?: return
+        val checkChangedMethod = checkChangedMethods
+            .mapNotNull { runCatching { it.getMethodInstance(classLoader) }.getOrNull() }
+            .firstOrNull { candidate ->
+                candidate.parameterTypes.size == 2 &&
+                    candidate.parameterTypes[0].isAssignableFrom(clazz) &&
+                    candidate.parameterTypes[1] == Boolean::class.javaPrimitiveType
+            }
+            ?.apply { isAccessible = true }
+            ?: return
 
         clazz.declaredMethods
             .filter { it.name == "onBindViewHolder" && it.parameterCount == 1 }
@@ -167,17 +190,11 @@ object PasskeySettingsFix : StaticHooker() {
                     switchView.setOnClickListener {
                         val listener = runCatching { clickListenerField.get(preference) }.getOrNull()
                             ?: return@setOnClickListener
-                        val callback = listener.javaClass.declaredMethods.firstOrNull { callback ->
-                            callback.parameterCount == 2 &&
-                                callback.parameterTypes[1] == Boolean::class.javaPrimitiveType &&
-                                callback.returnType == Boolean::class.javaPrimitiveType
-                        } ?: return@setOnClickListener
-                        callback.isAccessible = true
                         val accepted = runCatching {
-                            callback.invoke(listener, preference, switchView.isChecked) as? Boolean
+                            checkChangedMethod.invoke(listener, preference, switchView.isChecked) as? Boolean
                         }.getOrNull() ?: true
                         if (!accepted) {
-                            runCatching { checkedField.setBoolean(preference, false) }
+                            runCatching { PasskeyUnsafe.setBoolean(checkedField, preference, false) }
                             switchView.isChecked = false
                         }
                     }

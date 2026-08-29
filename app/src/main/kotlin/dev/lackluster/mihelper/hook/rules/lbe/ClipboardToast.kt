@@ -20,28 +20,67 @@
 
 package dev.lackluster.mihelper.hook.rules.lbe
 
+import android.content.Context
+import android.widget.Toast
 import com.highcapable.kavaref.KavaRef.Companion.resolve
+import dev.lackluster.mihelper.data.Scope
+import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.data.preference.Preferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
+import dev.lackluster.mihelper.hook.utils.toTyped
+import dev.lackluster.mihelper.utils.factory.getResId
 
 object ClipboardToast : StaticHooker() {
+    private var overlayReadClipboardToast = 0
+    private var useToast = false
+    private var hideToast = false
+
     override fun onInit() {
-        updateSelfState(Preferences.LBE.TOAST_CLIPBOARD_USAGE.get())
+        useToast = Preferences.LBE.TOAST_CLIPBOARD_USAGE.get()
+        hideToast = ParityPreferences.HIDE_CLIPBOARD_USAGE_TOAST.get()
+        updateSelfState(useToast || hideToast)
     }
 
     override fun onHook() {
         "com.lbe.security.utility.ToastUtil".toClassOrNull()?.apply {
+            val contextField = resolve().firstFieldOrNull {
+                name = "mContext"
+            }?.toTyped<Context>()
             resolve().firstMethodOrNull {
                 name = "initToastView"
             }?.hook {
-                // type == 1 is the clipboard-read usage prompt. Suppress only this
-                // LBE notification instead of globally blocking Toasts.
-                if ((getArg(1) as? Int) == 1) {
-                    result(null)
-                } else {
-                    result(proceed())
+                if ((getArg(1) as? Int) != 1) return@hook result(proceed())
+                if (hideToast) return@hook result(null)
+                if (!useToast) return@hook result(proceed())
+
+                val context = contextField?.get(thisObject)
+                val packageName = getArg(0) as? String
+                if (context == null || packageName.isNullOrBlank()) {
+                    return@hook result(proceed())
                 }
+
+                if (overlayReadClipboardToast == 0) {
+                    overlayReadClipboardToast = context.getResId(
+                        "overlay_read_clip_toast",
+                        "string",
+                        Scope.LBE,
+                    )
+                }
+                val appLabel = runCatching {
+                    val packageManager = context.packageManager
+                    packageManager.getApplicationInfo(packageName, 0)
+                        .loadLabel(packageManager)
+                        .toString()
+                }.getOrNull() ?: return@hook result(proceed())
+                if (overlayReadClipboardToast == 0) return@hook result(proceed())
+
+                Toast.makeText(
+                    context,
+                    context.getString(overlayReadClipboardToast, appLabel),
+                    Toast.LENGTH_SHORT,
+                ).show()
+                result(null)
             }
         }
     }
