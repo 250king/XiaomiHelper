@@ -5,7 +5,6 @@ import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
 import dev.lackluster.mihelper.hook.utils.PasskeyUnsafe
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
-import dev.lackluster.mihelper.hook.utils.toClassOrNull
 
 /**
  * Port of HyperCeiler AntiQues.
