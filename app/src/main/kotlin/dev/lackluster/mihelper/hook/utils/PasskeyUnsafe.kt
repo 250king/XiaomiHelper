@@ -30,29 +30,29 @@ object PasskeyUnsafe {
         unsafeClass.getMethod("objectFieldOffset", Field::class.java)
     }
     private val getIntMethod: Method by lazy {
-        unsafeClass.getMethod("getInt", Any::class.java, Long::class.javaPrimitiveType)
+        unsafeClass.getMethod("getInt", Any::class.java, Long::class.javaPrimitiveType!!)
     }
     private val putIntMethod: Method by lazy {
         unsafeClass.getMethod(
             "putInt",
             Any::class.java,
-            Long::class.javaPrimitiveType,
-            Int::class.javaPrimitiveType,
+            Long::class.javaPrimitiveType!!,
+            Int::class.javaPrimitiveType!!,
         )
     }
     private val putBooleanMethod: Method by lazy {
         unsafeClass.getMethod(
             "putBoolean",
             Any::class.java,
-            Long::class.javaPrimitiveType,
-            Boolean::class.javaPrimitiveType,
+            Long::class.javaPrimitiveType!!,
+            Boolean::class.javaPrimitiveType!!,
         )
     }
     private val putObjectMethod: Method by lazy {
         unsafeClass.getMethod(
             "putObject",
             Any::class.java,
-            Long::class.javaPrimitiveType,
+            Long::class.javaPrimitiveType!!,
             Any::class.java,
         )
     }
@@ -60,7 +60,7 @@ object PasskeyUnsafe {
         unsafeClass.getMethod(
             "putObjectVolatile",
             Any::class.java,
-            Long::class.javaPrimitiveType,
+            Long::class.javaPrimitiveType!!,
             Any::class.java,
         )
     }
