@@ -3,7 +3,7 @@ package dev.lackluster.mihelper.data.preference
 import dev.lackluster.hyperx.ui.preference.core.PreferenceKey
 
 /**
- * Preferences for parity hooks ported from Cemiuiler / HyperCeiler.
+ * Preferences for parity hooks ported from Cemiuiler / HyperCeiler and focused standalone modules.
  * Kept separate from the upstream preference tree so the port stays easy to review and rebase.
  */
 object ParityPreferences {
@@ -12,4 +12,6 @@ object ParityPreferences {
     val ALLOW_THIRD_PARTY_THEME = PreferenceKey("parity_allow_third_party_theme", false)
     val HIDE_BLUETOOTH_UNLOCK_TOAST = PreferenceKey("parity_hide_bluetooth_unlock_toast", false)
     val DISABLE_ROAMING_SIM_ACTIVATION = PreferenceKey("parity_disable_roaming_sim_activation", false)
+    val REDIRECT_XIAOMI_BROWSER = PreferenceKey("parity_redirect_xiaomi_browser", false)
+    val FIX_HYPEROS_PASSKEY = PreferenceKey("parity_fix_hyperos_passkey", false)
 }
