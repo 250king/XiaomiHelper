@@ -125,7 +125,7 @@ object FCMSystemFix : StaticHooker() {
                 val record = getArg(1)
                 val callerPackage = runCatching { callerPackageField.get(record) as? String }.getOrNull()
                 val intent = runCatching { intentField.get(record) as? Intent }.getOrNull()
-                val targetPackage = intent?.`package`
+                val targetPackage = intent?.`package` ?: intent?.component?.packageName
 
                 if (
                     callerPackage == GMS_PACKAGE &&
