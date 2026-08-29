@@ -68,7 +68,7 @@ object PasskeySystemFix : StaticHooker() {
                         return@hook result(proceed())
                     }
 
-                    runCatching {
+                    val configured = runCatching {
                         invokeBuilder(builder, "setOemUiPackageName", component.packageName)
                         val statusClass = Class.forName(
                             "android.credentials.selection.IntentCreationResult\$OemUiUsageStatus",
@@ -77,9 +77,11 @@ object PasskeySystemFix : StaticHooker() {
                         )
                         val success = statusClass.enumConstants
                             ?.firstOrNull { (it as? Enum<*>)?.name == "SUCCESS" }
-                        if (success != null) invokeBuilder(builder, "setOemUiUsageStatus", success)
-                    }
-                    result(component)
+                            ?: error("OEM UI SUCCESS status unavailable")
+                        invokeBuilder(builder, "setOemUiUsageStatus", success)
+                    }.isSuccess
+
+                    if (configured) result(component) else result(proceed())
                 }
             }
     }
@@ -103,7 +105,7 @@ object PasskeySystemFix : StaticHooker() {
     private fun invokeBuilder(builder: Any, name: String, argument: Any) {
         val method = (builder.javaClass.methods.asSequence() + builder.javaClass.declaredMethods.asSequence())
             .firstOrNull { it.name == name && it.parameterCount == 1 }
-            ?: return
+            ?: error("Builder method unavailable: $name")
         method.isAccessible = true
         method.invoke(builder, argument)
     }
