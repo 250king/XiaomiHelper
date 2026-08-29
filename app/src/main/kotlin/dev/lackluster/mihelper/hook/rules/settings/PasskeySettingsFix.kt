@@ -10,19 +10,34 @@ import android.view.View
 import android.widget.CompoundButton
 import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
+import dev.lackluster.mihelper.hook.utils.DexKit
 import dev.lackluster.mihelper.hook.utils.PasskeyUnsafe
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.util.concurrent.locks.ReentrantLock
 
 /** Restore the AOSP Credential Manager provider UI paths hidden by CN HyperOS Settings. */
 object PasskeySettingsFix : StaticHooker() {
+    override val requireDexKit: Boolean = true
+
     private val intlLock = ReentrantLock(true)
     private val intlDepth = ThreadLocal.withInitial { 0 }
     private val previousIntlValue = ThreadLocal<Boolean?>()
 
+    private val leftSideClickMethods by lazy {
+        DexKit.findMethodsWithCache("passkey_provider_left_side_click") {
+            matcher {
+                name = "onLeftSideClicked"
+                paramCount = 0
+            }
+        }
+    }
+
     override fun onInit() {
-        updateSelfState(ParityPreferences.FIX_HYPEROS_PASSKEY.get())
+        val enabled = ParityPreferences.FIX_HYPEROS_PASSKEY.get()
+        updateSelfState(enabled)
+        if (enabled) leftSideClickMethods
     }
 
     override fun onHook() {
@@ -47,6 +62,16 @@ object PasskeySettingsFix : StaticHooker() {
             "updateState",
             internationalField,
         )
+
+        if (internationalField != null) {
+            leftSideClickMethods
+                .mapNotNull { runCatching { it.getMethodInstance(classLoader) }.getOrNull() }
+                .filter {
+                    it.declaringClass.name.startsWith("com.android.settings.applications.credentials")
+                }
+                .forEach { it.hookWithInternationalBuild(internationalField) }
+        }
+
         hookCredentialCombiPreference()
     }
 
@@ -59,40 +84,42 @@ object PasskeySettingsFix : StaticHooker() {
         val clazz = className.toClassOrNull() ?: return
         clazz.declaredMethods
             .filter { it.name == methodName }
-            .forEach { method ->
-                method.isAccessible = true
-                method.hook {
-                    intlLock.lock()
-                    try {
-                        val depth = intlDepth.get()
-                        if (depth == 0) {
-                            val previous = runCatching { internationalField.getBoolean(null) }.getOrDefault(false)
-                            previousIntlValue.set(previous)
-                            if (!previous) PasskeyUnsafe.setStaticBoolean(internationalField, true)
-                        }
-                        intlDepth.set(depth + 1)
+            .forEach { method -> method.hookWithInternationalBuild(internationalField) }
+    }
 
-                        val original = try {
-                            proceed()
-                        } finally {
-                            val nextDepth = intlDepth.get() - 1
-                            if (nextDepth <= 0) {
-                                val previous = previousIntlValue.get()
-                                previousIntlValue.remove()
-                                intlDepth.remove()
-                                if (previous != null) {
-                                    runCatching { PasskeyUnsafe.setStaticBoolean(internationalField, previous) }
-                                }
-                            } else {
-                                intlDepth.set(nextDepth)
-                            }
+    private fun Method.hookWithInternationalBuild(internationalField: Field) {
+        isAccessible = true
+        hook {
+            intlLock.lock()
+            try {
+                val depth = intlDepth.get()
+                if (depth == 0) {
+                    val previous = runCatching { internationalField.getBoolean(null) }.getOrDefault(false)
+                    previousIntlValue.set(previous)
+                    if (!previous) PasskeyUnsafe.setStaticBoolean(internationalField, true)
+                }
+                intlDepth.set(depth + 1)
+
+                val original = try {
+                    proceed()
+                } finally {
+                    val nextDepth = intlDepth.get() - 1
+                    if (nextDepth <= 0) {
+                        val previous = previousIntlValue.get()
+                        previousIntlValue.remove()
+                        intlDepth.remove()
+                        if (previous != null) {
+                            runCatching { PasskeyUnsafe.setStaticBoolean(internationalField, previous) }
                         }
-                        result(original)
-                    } finally {
-                        intlLock.unlock()
+                    } else {
+                        intlDepth.set(nextDepth)
                     }
                 }
+                result(original)
+            } finally {
+                intlLock.unlock()
             }
+        }
     }
 
     /**
@@ -162,10 +189,11 @@ object PasskeySettingsFix : StaticHooker() {
     private fun findField(clazz: Class<*>, name: String): Field? {
         var current: Class<*>? = clazz
         while (current != null) {
-            runCatching {
+            try {
                 return current.getDeclaredField(name).apply { isAccessible = true }
+            } catch (_: NoSuchFieldException) {
+                current = current.superclass
             }
-            current = current.superclass
         }
         return null
     }
