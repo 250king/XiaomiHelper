@@ -89,6 +89,7 @@ object PasskeySettingsFix : StaticHooker() {
 
     private fun Method.hookWithInternationalBuild(internationalField: Field) {
         isAccessible = true
+        runCatching { module.deoptimize(this) }
         hook {
             intlLock.lock()
             try {
@@ -146,6 +147,7 @@ object PasskeySettingsFix : StaticHooker() {
             .filter { it.name == "onBindViewHolder" && it.parameterCount == 1 }
             .forEach { method ->
                 method.isAccessible = true
+                runCatching { module.deoptimize(method) }
                 method.hook {
                     val original = proceed()
                     val preference = thisObject
