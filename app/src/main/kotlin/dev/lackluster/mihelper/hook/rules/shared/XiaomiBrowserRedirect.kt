@@ -94,7 +94,7 @@ object XiaomiBrowserRedirect : StaticHooker() {
                     val context = thisObject as? Context ?: return@hook result(proceed())
                     val intent = getArg(0) as? Intent ?: return@hook result(proceed())
                     val options = args.firstOrNull { it is Bundle } as? Bundle
-                    interceptStart(context, intent, options) ?: result(proceed())
+                    if (interceptStart(context, intent, options)) result(null) else result(proceed())
                 }
             }
     }
@@ -113,7 +113,7 @@ object XiaomiBrowserRedirect : StaticHooker() {
                     val context = args.firstOrNull { it is Context } as? Context
                         ?: return@hook result(proceed())
                     val intent = getArg(intentIndex) as? Intent ?: return@hook result(proceed())
-                    interceptStart(context, intent, null) ?: result(proceed())
+                    if (interceptStart(context, intent, null)) result(null) else result(proceed())
                 }
             }
     }
@@ -144,24 +144,25 @@ object XiaomiBrowserRedirect : StaticHooker() {
             }
     }
 
-    private fun interceptStart(context: Context, intent: Intent, options: Bundle?): dev.lackluster.mihelper.hook.base.HookResult? {
+    /** Returns true when the original launch should be consumed. */
+    private fun interceptStart(context: Context, intent: Intent, options: Bundle?): Boolean {
         rememberWebUrl(intent)
-        if (redirectGuard.get()) return null
-        if (!shouldIntercept(context.packageName, intent)) return null
+        if (redirectGuard.get()) return false
+        if (!shouldIntercept(context.packageName, intent)) return false
 
         val targetUrl = recoverWebUri(intent) ?: recentUrl()
         if (targetUrl == null) {
             // Do not fall through to Xiaomi Market's "install browser" page when that is the only target.
-            return if (isBrowserDownloadIntent(intent)) result(null) else null
+            return isBrowserDownloadIntent(intent)
         }
 
         val replacement = buildReplacementIntent(context, intent, targetUrl)
         redirectGuard.set(true)
         return try {
             if (options != null) context.startActivity(replacement, options) else context.startActivity(replacement)
-            result(null)
+            true
         } catch (_: Throwable) {
-            null
+            false
         } finally {
             redirectGuard.remove()
         }
