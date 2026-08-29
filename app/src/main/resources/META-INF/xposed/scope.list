@@ -13,9 +13,11 @@ com.android.updater
 com.duokan.phone.remotecontroller
 com.lbe.security.miui
 com.milink.service
+com.miui.contentcatcher
 com.miui.contentextension
 com.miui.guardprovider
 com.miui.home
+com.miui.mishare.connectivity
 com.miui.packageinstaller
 com.miui.personalassistant
 com.miui.player
@@ -23,10 +25,12 @@ com.miui.powerkeeper
 com.miui.securitycenter
 com.miui.voiceassist
 com.xiaomi.aicr
+com.xiaomi.aiasst.vision
 com.xiaomi.finddevice
 com.xiaomi.market
 com.xiaomi.mirror
 com.xiaomi.misettings
+com.xiaomi.scanner
 com.xiaomi.simactivate.service
 com.xiaomi.trustservice
 miui.systemui.plugin
