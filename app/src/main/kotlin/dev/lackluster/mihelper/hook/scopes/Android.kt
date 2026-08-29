@@ -5,6 +5,7 @@ import dev.lackluster.mihelper.hook.rules.android.AllowMoreFreeform
 import dev.lackluster.mihelper.hook.rules.android.AllowScreenshot
 import dev.lackluster.mihelper.hook.rules.android.AllowThirdPartyTheme
 import dev.lackluster.mihelper.hook.rules.android.DarkModeForAll
+import dev.lackluster.mihelper.hook.rules.android.DisableAppLinkVerify
 import dev.lackluster.mihelper.hook.rules.android.DisableWakePathChecker
 import dev.lackluster.mihelper.hook.rules.android.FCMSystemFix
 import dev.lackluster.mihelper.hook.rules.android.FontScale
@@ -22,6 +23,7 @@ object Android : StaticHooker() {
         attach(FCMSystemFix)
         attach(AllowScreenshot)
         attach(AllowThirdPartyTheme)
+        attach(DisableAppLinkVerify)
         attach(PasskeySystemFix)
         attach(XiaomiBrowserRedirect)
     }
