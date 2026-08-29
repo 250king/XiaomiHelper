@@ -181,7 +181,7 @@ object XiaomiBrowserRedirect : StaticHooker() {
                     if (!isBrowserDownloadIntent(intent)) return@hook result(proceed())
                     val recovered = recoverWebUri(intent) ?: recentUrl() ?: return@hook result(proceed())
                     val replacement = buildReplacementIntent(context, intent, recovered)
-                    val newArgs = args.copyOf()
+                    val newArgs = args.toTypedArray()
                     newArgs[intentIndex] = replacement
                     result(proceed(newArgs))
                 }
