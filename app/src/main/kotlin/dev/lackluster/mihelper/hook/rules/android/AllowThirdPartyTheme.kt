@@ -23,7 +23,7 @@ object AllowThirdPartyTheme : StaticHooker() {
                 name = "onReceive"
             }?.hook {
                 checkingTheme.set(true)
-                try {
+                return@hook try {
                     result(proceed())
                 } finally {
                     checkingTheme.remove()
