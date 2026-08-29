@@ -219,6 +219,16 @@ private fun SystemFrameworkPageContent(
                 title = "Disable SIM activation while roaming",
                 summary = "Skip Xiaomi activation receivers for a mainland-China SIM when it is roaming."
             )
+            SwitchPreference(
+                key = ParityPreferences.REDIRECT_XIAOMI_BROWSER,
+                title = "Use default browser for Xiaomi links",
+                summary = "Prevent HyperOS components from forcing web links into Xiaomi Browser or its Market download page."
+            )
+            SwitchPreference(
+                key = ParityPreferences.FIX_HYPEROS_PASSKEY,
+                title = "Fix HyperOS passkeys",
+                summary = "Restore Credential Manager/passkey integration on CN HyperOS. Preinstalled Google Basic Services must be enabled."
+            )
         }
     }
 }
