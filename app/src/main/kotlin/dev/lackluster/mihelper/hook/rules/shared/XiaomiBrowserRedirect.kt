@@ -10,7 +10,6 @@ package dev.lackluster.mihelper.hook.rules.shared
 
 import android.app.Activity
 import android.app.PendingIntent
-import android.app.role.RoleManager
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
@@ -277,12 +276,6 @@ object XiaomiBrowserRedirect : StaticHooker() {
     }
 
     private fun resolveDefaultBrowser(context: Context): String? {
-        runCatching {
-            val roleManager = context.getSystemService(RoleManager::class.java)
-            roleManager?.getRoleHolders(RoleManager.ROLE_BROWSER)
-                ?.firstOrNull { !isXiaomiBrowser(it) }
-        }.getOrNull()?.let { return it }
-
         val probe = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.example.com")).apply {
             addCategory(Intent.CATEGORY_BROWSABLE)
             addCategory(Intent.CATEGORY_DEFAULT)
