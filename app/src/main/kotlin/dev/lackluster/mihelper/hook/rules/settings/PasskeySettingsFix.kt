@@ -92,7 +92,7 @@ object PasskeySettingsFix : StaticHooker() {
         runCatching { module.deoptimize(this) }
         hook {
             intlLock.lock()
-            try {
+            return@hook try {
                 val depth = intlDepth.get()
                 if (depth == 0) {
                     val previous = runCatching { internationalField.getBoolean(null) }.getOrDefault(false)
