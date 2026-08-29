@@ -220,6 +220,11 @@ private fun SystemFrameworkPageContent(
                 summary = "Skip Xiaomi activation receivers for a mainland-China SIM when it is roaming."
             )
             SwitchPreference(
+                key = ParityPreferences.DISABLE_APP_LINK_VERIFY,
+                title = "Disable app link verification",
+                summary = "Let matching third-party apps participate in normal web-link intent resolution."
+            )
+            SwitchPreference(
                 key = ParityPreferences.REDIRECT_XIAOMI_BROWSER,
                 title = "Use default browser for Xiaomi links",
                 summary = "Prevent HyperOS components from forcing web links into Xiaomi Browser or its Market download page."
