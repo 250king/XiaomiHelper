@@ -336,6 +336,8 @@
     <string name="cleaner_browser_show_sug_switch_tips">Displays the hidden Search Highlights toggle in search settings. Turning it off disables extra recommendations such as apps, videos, and novels on the search page.</string>
     <string name="cleaner_browser_hide_homepage_topbar">Hide the top bar of the start page</string>
     <string name="cleaner_browser_hide_homepage_topbar_tips">Hide the top bar of the simplified start page, which includes settings and mode toggle buttons.</string>
+    <string name="cleaner_browser_hide_voice_button">Hide voice input button</string>
+    <string name="cleaner_browser_hide_voice_button_tips">Hide the \"Hold to speak\" button on the search page</string>
     <string name="cleaner_browser_block_dialog">Block promotional dialogs</string>
     <string name="cleaner_browser_block_dialog_tips">Block promotional dialogs such as widget recommendation dialogs</string>
     <string name="cleaner_browser_debug_mode">Enable debug mode</string>

@@ -660,6 +660,7 @@
     <string name="clock_fw_date_time">自定义通知中心日期字重</string>
     <string name="clock_fw_horizontal_time">自定义通知中心横屏日期时间字重</string>
     <string name="clock_fw_horizontal_time_weight">通知中心横屏日期时间字重</string>
+    <string name="cleaner_browser_hide_voice_button_tips">隐藏搜索页的”按住说话“按钮</string>
     <string name="cleaner_browser_block_dialog">屏蔽营销弹窗</string>
     <string name="cleaner_browser_block_dialog_tips">阻止各种推广弹窗弹出，如小组件推荐对话框</string>
     <string name="cleaner_browser_show_sug_switch">恢复搜索精选设置</string>
@@ -783,4 +784,5 @@
     <string name="others_taplus_xiaoai_integration_tips">触发时显示超级小爱卡片，并在文本和图像识别面板增加“贴背屏”入口</string>
     <string name="others_taplus_rear_screen">背屏</string>
     <string name="others_taplus_xiaoai_integration">超级小爱集成</string>
+    <string name="cleaner_browser_hide_voice_button">隐藏语音输入按钮</string>
 </resources>

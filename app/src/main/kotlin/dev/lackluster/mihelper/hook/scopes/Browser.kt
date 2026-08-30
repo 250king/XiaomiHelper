@@ -8,6 +8,7 @@ import dev.lackluster.mihelper.hook.rules.browser.DisableUpdateCheck
 import dev.lackluster.mihelper.hook.rules.browser.SyncUserAgentMetadata
 import dev.lackluster.mihelper.hook.rules.browser.FixBackHandler
 import dev.lackluster.mihelper.hook.rules.browser.HideHomepageTopBar
+import dev.lackluster.mihelper.hook.rules.browser.HideVoiceButton
 import dev.lackluster.mihelper.hook.rules.browser.SkipSplash
 import dev.lackluster.mihelper.hook.rules.browser.SwitchEnv
 
@@ -24,5 +25,6 @@ object Browser : StaticHooker() {
         attach(BlockDialog)
         attach(HideHomepageTopBar)
         attach(FixBackHandler)
+        attach(HideVoiceButton)
     }
 }
