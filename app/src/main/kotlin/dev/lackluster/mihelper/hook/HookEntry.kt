@@ -6,6 +6,7 @@ import dev.lackluster.mihelper.hook.scopes.SystemUI
 import dev.lackluster.mihelper.hook.scopes.SecurityCenter
 import dev.lackluster.mihelper.hook.scopes.PackageInstaller
 import dev.lackluster.mihelper.hook.scopes.Browser
+import dev.lackluster.mihelper.hook.scopes.BrowserRedirect
 import dev.lackluster.mihelper.hook.scopes.Search
 import dev.lackluster.mihelper.hook.scopes.PersonalAssist
 import dev.lackluster.mihelper.hook.scopes.PowerKeeper
@@ -33,7 +34,9 @@ import dev.lackluster.mihelper.hook.scopes.MiTrust
 import dev.lackluster.mihelper.hook.scopes.MiuiHome
 import dev.lackluster.mihelper.hook.scopes.Music
 import dev.lackluster.mihelper.hook.scopes.RemoteController
+import dev.lackluster.mihelper.hook.scopes.Scanner
 import dev.lackluster.mihelper.hook.scopes.Settings
+import dev.lackluster.mihelper.hook.scopes.SimActivate
 import dev.lackluster.mihelper.hook.scopes.SystemUIPlugin
 import dev.lackluster.mihelper.hook.utils.RemotePreferences
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
@@ -93,7 +96,9 @@ class HookEntry : XposedModule() {
 
     private fun getHookerByPackageName(pkg: String): BaseHooker? = when(pkg) {
         Scope.AI_ENGINE -> AIEngine
+        Scope.AI_ASSIST_VISION -> BrowserRedirect
         Scope.BROWSER -> Browser
+        Scope.CONTENT_CATCHER -> BrowserRedirect
         Scope.DOWNLOAD -> Download
         Scope.DOWNLOAD_UI -> DownloadUI
         Scope.FIND_DEVICE -> FindDevice
@@ -105,6 +110,7 @@ class HookEntry : XposedModule() {
         Scope.MI_INTENT_RESOLVER -> MiIntentResolver
         Scope.MI_LINK -> MiLink
         Scope.MI_MIRROR -> MiMirror
+        Scope.MI_SHARE -> BrowserRedirect
         Scope.MI_TRUST -> MiTrust
         Scope.MIUI_HOME -> MiuiHome
         Scope.MI_SETTINGS -> MiSettings
@@ -114,6 +120,7 @@ class HookEntry : XposedModule() {
         Scope.PERSONAL_ASSIST -> PersonalAssist
         Scope.POWER_KEEPER -> PowerKeeper
         Scope.REMOTE_CONTROLLER -> RemoteController
+        Scope.SCANNER -> Scanner
         Scope.SEARCH -> Search
         Scope.SECURITY_CENTER -> SecurityCenter
         Scope.SETTINGS -> Settings
@@ -122,6 +129,7 @@ class HookEntry : XposedModule() {
         Scope.TAPLUS -> Taplus
         Scope.THEMES -> Themes
         Scope.UPDATER -> Updater
+        Scope.SIM_ACTIVATE -> SimActivate
         else -> null
     }
 

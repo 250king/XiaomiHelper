@@ -1,5 +1,6 @@
 package dev.lackluster.mihelper.app.screen.clean
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -12,14 +13,14 @@ import dev.lackluster.hyperx.ui.preference.ItemPosition
 import dev.lackluster.hyperx.ui.preference.SwitchPreference
 import dev.lackluster.hyperx.ui.preference.TextPreference
 import dev.lackluster.hyperx.ui.preference.ValuePosition
-import dev.lackluster.hyperx.ui.preference.itemPreferenceGroup
-import dev.lackluster.mihelper.R
 import dev.lackluster.hyperx.ui.preference.core.LocalPreferenceActions
 import dev.lackluster.hyperx.ui.preference.core.rememberPreferenceState
+import dev.lackluster.hyperx.ui.preference.itemPreferenceGroup
+import dev.lackluster.mihelper.R
 import dev.lackluster.mihelper.app.component.AppRestartPreferenceItem
+import dev.lackluster.mihelper.app.component.InnerHorizontalDivider
 import dev.lackluster.mihelper.app.utils.jumpToAppDetailsSettings
 import dev.lackluster.mihelper.app.utils.showToast
-import dev.lackluster.mihelper.app.component.InnerHorizontalDivider
 import dev.lackluster.mihelper.app.widget.preference.DropDownOption
 import dev.lackluster.mihelper.app.widget.preference.DropDownPreference
 import dev.lackluster.mihelper.data.Scope
@@ -40,6 +41,25 @@ private val customInstallSourceOptions = listOf(
     DropDownOption(3, R.string.cleaner_package_install_source_custom),
 )
 
+private val cleanMasterScopes = setOf(
+    Scope.BROWSER,
+    Scope.DOWNLOAD,
+    Scope.DOWNLOAD_UI,
+    Scope.IN_CALL_UI,
+    Scope.FIND_DEVICE,
+    Scope.MARKET,
+    Scope.MI_LINK,
+    Scope.MMS,
+    Scope.MUSIC,
+    Scope.PACKAGE_INSTALLER,
+    Scope.REMOTE_CONTROLLER,
+    Scope.THEMES,
+)
+
+private fun Context.isPackageInstalled(packageName: String): Boolean = runCatching {
+    packageManager.getApplicationInfo(packageName, 0)
+}.isSuccess
+
 @Composable
 fun CleanMasterPage() {
     val context = LocalContext.current
@@ -48,6 +68,9 @@ fun CleanMasterPage() {
     val marketFilterSheetVisibility = remember { mutableStateOf(false) }
     val isMarketFilterTabOn = remember {
         mutableStateOf(appSettingsActions.get(Preferences.Market.ENABLE_FILTER_TAB))
+    }
+    val installedPackages = remember(context) {
+        cleanMasterScopes.filterTo(mutableSetOf()) { context.isPackageInstalled(it) }
     }
 
     val onAction: (CleanMasterUIAction) -> Unit = { action ->
@@ -59,6 +82,7 @@ fun CleanMasterPage() {
 
     CleanMasterPageContent(
         isMarketFilterTabOn = isMarketFilterTabOn.value,
+        installedPackages = installedPackages,
         onAction = onAction
     )
 
@@ -77,276 +101,313 @@ fun CleanMasterPage() {
 @Composable
 private fun CleanMasterPageContent(
     isMarketFilterTabOn: Boolean,
+    installedPackages: Set<String>,
     onAction: (CleanMasterUIAction) -> Unit
 ) {
     HyperXPage(
         title = stringResource(R.string.page_cleaner)
     ) {
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_browser,
-        ) {
-            AppRestartPreferenceItem(
-                packageName = Scope.BROWSER,
-                title = stringResource(R.string.cleaner_common_restart_app, stringResource(R.string.scope_browser)),
-                verifiedVersion = Version.BROWSER,
-                onFallbackAction = { onAction(CleanMasterUIAction.OpenAppDetails(Scope.BROWSER)) }
-            )
-            InnerHorizontalDivider()
-            SwitchPreference(
-                key = Preferences.Browser.AD_BLOCKER,
-                title = stringResource(R.string.cleaner_common_ad_blocker),
-            )
-            SwitchPreference(
-                key = Preferences.Browser.SKIP_SPLASH,
-                title = stringResource(R.string.cleaner_common_skip_splash),
-                summary = stringResource(R.string.cleaner_common_skip_splash_tips),
-            )
-            SwitchPreference(
-                key = Preferences.Browser.SYNC_USER_AGENT_METADATA,
-                title = stringResource(R.string.cleaner_browser_sync_user_agent_metadata),
-                summary = stringResource(R.string.cleaner_browser_sync_user_agent_metadata_tips),
-            )
-            SwitchPreference(
-                key = Preferences.Browser.SHOW_SUG_SWITCH_ENTRY,
-                title = stringResource(R.string.cleaner_browser_show_sug_switch),
-                summary = stringResource(R.string.cleaner_browser_show_sug_switch_tips),
-            )
-            SwitchPreference(
-                key = Preferences.Browser.HIDE_HOMEPAGE_TOP_BAR,
-                title = stringResource(R.string.cleaner_browser_hide_homepage_topbar),
-                summary = stringResource(R.string.cleaner_browser_hide_homepage_topbar_tips),
-            )
-            SwitchPreference(
-                key = Preferences.Browser.BLOCK_DIALOG,
-                title = stringResource(R.string.cleaner_browser_block_dialog),
-                summary = stringResource(R.string.cleaner_browser_block_dialog_tips),
-            )
-            SwitchPreference(
-                key = Preferences.Browser.DEBUG_MODE,
-                title = stringResource(R.string.cleaner_browser_debug_mode),
-                summary = stringResource(R.string.cleaner_browser_debug_mode_tips),
-            )
-            SwitchPreference(
-                key = Preferences.Browser.SWITCH_ENV,
-                title = stringResource(R.string.cleaner_browser_switch_env),
-                summary = stringResource(R.string.cleaner_browser_switch_env_tips),
-            )
-            SwitchPreference(
-                key = Preferences.Browser.BLOCK_UPDATE,
-                title = stringResource(R.string.cleaner_browser_disable_update),
-            )
-        }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_download,
-        ) {
-            SwitchPreference(
-                key = Preferences.DownloadUI.HIDE_XL,
-                title = stringResource(R.string.cleaner_downloadui_hide_xl)
-            )
-            SwitchPreference(
-                key = Preferences.Download.FUCK_XL,
-                title = stringResource(R.string.cleaner_download_fuck_xl)
-            )
-        }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_incallui,
-        ) {
-            SwitchPreference(
-                key = Preferences.InCallUI.HIDE_CRBT,
-                title = stringResource(R.string.cleaner_incallui_hide_crbt)
-            )
-        }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_find_device,
-        ) {
-            SwitchPreference(
-                key = Preferences.FindDevice.FUCK_AIVS,
-                title = stringResource(R.string.cleaner_find_device_fuck_aivs),
-                summary = stringResource(R.string.cleaner_find_device_fuck_aivs_tips)
-            )
-        }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_market,
-        ) {
-            AppRestartPreferenceItem(
-                packageName = Scope.MARKET,
-                title = stringResource(R.string.cleaner_common_restart_app, stringResource(R.string.scope_market)),
-                verifiedVersion = Version.MARKET,
-                onFallbackAction = { onAction(CleanMasterUIAction.OpenAppDetails(Scope.MARKET)) }
-            )
-            InnerHorizontalDivider()
-            SwitchPreference(
-                key = Preferences.Market.AD_BLOCKER,
-                title = stringResource(R.string.cleaner_common_ad_blocker)
-            )
-            SwitchPreference(
-                key = Preferences.Market.SKIP_SPLASH,
-                title = stringResource(R.string.cleaner_common_skip_splash),
-                summary = stringResource(R.string.cleaner_common_skip_splash_tips)
-            )
-            SwitchPreference(
-                key = Preferences.Market.BLOCK_UPDATE_DIALOG,
-                title = stringResource(R.string.cleaner_market_block_update_dailog),
-                summary = stringResource(R.string.cleaner_market_block_update_dailog_tips)
-            )
-            SwitchPreference(
-                key = Preferences.Market.HIDE_APP_SECURITY,
-                title = stringResource(R.string.cleaner_market_hide_app_security),
-                summary = stringResource(R.string.cleaner_market_hide_app_security_tips)
-            )
-            SwitchPreference(
-                key = Preferences.Market.TAB_BLUR,
-                title = stringResource(R.string.cleaner_market_bottom_tab_blur),
-                summary = stringResource(R.string.cleaner_market_bottom_tab_blur_tips)
-            )
-            SwitchPreference(
-                key = Preferences.Market.DISABLE_CUSTOMIZE_ICON,
-                title = stringResource(R.string.cleaner_market_disable_customize_icon),
-                summary = stringResource(R.string.cleaner_market_disable_customize_icon_tips)
-            )
-            TextPreference(
-                title = stringResource(R.string.cleaner_market_filter_tab),
-                summary = stringResource(R.string.cleaner_market_filter_tab_tips),
-                value = stringResource(if (isMarketFilterTabOn) R.string.common_on else R.string.common_off),
-                onClick = { onAction(CleanMasterUIAction.OpenMarketFilterSheet) }
-            )
-        }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_milink,
-        ) {
-            SwitchPreference(
-                key = Preferences.MiLink.FUCK_HPPLAY,
-                title = stringResource(R.string.cleaner_milink_fuck_hpplay)
-            )
-        }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_mms
-        ) {
-            SwitchPreference(
-                key = Preferences.MMS.AD_BLOCKER,
-                title = stringResource(R.string.cleaner_common_ad_blocker)
-            )
-        }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_music,
-        ) {
-            AppRestartPreferenceItem(
-                packageName = Scope.MUSIC,
-                title = stringResource(R.string.cleaner_common_restart_app, stringResource(R.string.scope_music)),
-                verifiedVersion = Version.MUSIC,
-                onFallbackAction = { onAction(CleanMasterUIAction.OpenAppDetails(Scope.MUSIC)) }
-            )
-            InnerHorizontalDivider()
-            SwitchPreference(
-                key = Preferences.Music.AD_BLOCKER,
-                title = stringResource(R.string.cleaner_common_ad_blocker)
-            )
-            SwitchPreference(
-                key = Preferences.Music.SKIP_SPLASH,
-                title = stringResource(R.string.cleaner_common_skip_splash),
-                summary = stringResource(R.string.cleaner_common_skip_splash_tips)
-            )
-            SwitchPreference(
-                key = Preferences.Music.HIDE_TAB_LONG_AUDIO,
-                title = stringResource(R.string.cleaner_music_hide_tab_long_audio),
-                summary = stringResource(R.string.cleaner_music_hide_tab_long_audio_tips)
-            )
-            SwitchPreference(
-                key = Preferences.Music.HIDE_TAB_QUICK_PLAY,
-                title = stringResource(R.string.cleaner_music_hide_tab_quick_play),
-                summary = stringResource(R.string.cleaner_music_hide_tab_quick_play_tips)
-            )
-            SwitchPreference(
-                key = Preferences.Music.HIDE_TAB_FREE_MODE,
-                title = stringResource(R.string.cleaner_music_hide_tab_free_mode),
-                summary = stringResource(R.string.cleaner_music_hide_tab_free_mode_tips)
-            )
-            SwitchPreference(
-                key = Preferences.Music.HIDE_MY_BANNER,
-                title = stringResource(R.string.cleaner_music_hide_my_banner)
-            )
-            SwitchPreference(
-                key = Preferences.Music.HIDE_MY_REC_PLAYLIST,
-                title = stringResource(R.string.cleaner_music_hide_my_rec_playlist)
-            )
-            SwitchPreference(
-                key = Preferences.Music.HIDE_FAV_NUM,
-                title = stringResource(R.string.cleaner_music_hide_fav_num),
-                summary = stringResource(R.string.cleaner_music_hide_fav_num_tips)
-            )
-            SwitchPreference(
-                key = Preferences.Music.HIDE_LISTEN_COUNT,
-                title = stringResource(R.string.cleaner_music_hide_listen_count),
-                summary = stringResource(R.string.cleaner_music_hide_listen_count_tips)
-            )
-        }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_package,
-        ) {
-            AppRestartPreferenceItem(
-                packageName = Scope.PACKAGE_INSTALLER,
-                title = stringResource(R.string.cleaner_common_restart_app, stringResource(R.string.scope_package_installer)),
-                verifiedVersion = Version.PACKAGE_INSTALLER,
-                onFallbackAction = { onAction(CleanMasterUIAction.OpenAppDetails(Scope.PACKAGE_INSTALLER)) }
-            )
-            InnerHorizontalDivider()
-            SwitchPreference(
-                key = Preferences.PackageInstaller.REMOVE_ELEMENT,
-                title = stringResource(R.string.cleaner_package_remove_element)
-            )
-            SwitchPreference(
-                key = Preferences.PackageInstaller.DISABLE_RISK_CHECK,
-                title = stringResource(R.string.cleaner_package_skip_risk_check)
-            )
-            SwitchPreference(
-                key = Preferences.PackageInstaller.DISGUISE_NO_NETWORK,
-                title = stringResource(R.string.cleaner_package_no_network)
-            )
-            SwitchPreference(
-                key = Preferences.PackageInstaller.DISABLE_COUNT_CHECK,
-                title = stringResource(R.string.cleaner_package_no_count_check)
-            )
-            SwitchPreference(
-                key = Preferences.PackageInstaller.BLOCK_UPLOAD_INFO,
-                title = stringResource(R.string.cleaner_package_block_upload_app_info)
-            )
-            val installSource = rememberPreferenceState(Preferences.PackageInstaller.CUSTOM_INSTALL_SOURCE)
-            DropDownPreference(
-                title = stringResource(R.string.cleaner_package_install_source),
-                summary = stringResource(R.string.cleaner_package_install_source_tips),
-                options = customInstallSourceOptions,
-                value = installSource.value,
-                onValueChange = { installSource.value = it }
-            )
-            AnimatedVisibility(installSource.value == 3) {
-                val customPkgName = rememberPreferenceState(Preferences.PackageInstaller.INSTALL_SOURCE_PKG)
-                EditTextPreference(
-                    title = stringResource(R.string.cleaner_package_custom_install_source),
-                    text = customPkgName.value,
-                    valuePosition = ValuePosition.Summary,
-                    onTextChange = {
-                        if (it.matches(PackageNameRegex)) customPkgName.value = it
-                    }
+        if (Scope.BROWSER in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_browser,
+            ) {
+                AppRestartPreferenceItem(
+                    packageName = Scope.BROWSER,
+                    title = stringResource(R.string.cleaner_common_restart_app, stringResource(R.string.scope_browser)),
+                    verifiedVersion = Version.BROWSER,
+                    onFallbackAction = { onAction(CleanMasterUIAction.OpenAppDetails(Scope.BROWSER)) }
+                )
+                InnerHorizontalDivider()
+                SwitchPreference(
+                    key = Preferences.Browser.AD_BLOCKER,
+                    title = stringResource(R.string.cleaner_common_ad_blocker),
+                )
+                SwitchPreference(
+                    key = Preferences.Browser.SKIP_SPLASH,
+                    title = stringResource(R.string.cleaner_common_skip_splash),
+                    summary = stringResource(R.string.cleaner_common_skip_splash_tips),
+                )
+                SwitchPreference(
+                    key = Preferences.Browser.SYNC_USER_AGENT_METADATA,
+                    title = stringResource(R.string.cleaner_browser_sync_user_agent_metadata),
+                    summary = stringResource(R.string.cleaner_browser_sync_user_agent_metadata_tips),
+                )
+                SwitchPreference(
+                    key = Preferences.Browser.SHOW_SUG_SWITCH_ENTRY,
+                    title = stringResource(R.string.cleaner_browser_show_sug_switch),
+                    summary = stringResource(R.string.cleaner_browser_show_sug_switch_tips),
+                )
+                SwitchPreference(
+                    key = Preferences.Browser.HIDE_HOMEPAGE_TOP_BAR,
+                    title = stringResource(R.string.cleaner_browser_hide_homepage_topbar),
+                    summary = stringResource(R.string.cleaner_browser_hide_homepage_topbar_tips),
+                )
+                SwitchPreference(
+                    key = Preferences.Browser.BLOCK_DIALOG,
+                    title = stringResource(R.string.cleaner_browser_block_dialog),
+                    summary = stringResource(R.string.cleaner_browser_block_dialog_tips),
+                )
+                SwitchPreference(
+                    key = Preferences.Browser.DEBUG_MODE,
+                    title = stringResource(R.string.cleaner_browser_debug_mode),
+                    summary = stringResource(R.string.cleaner_browser_debug_mode_tips),
+                )
+                SwitchPreference(
+                    key = Preferences.Browser.SWITCH_ENV,
+                    title = stringResource(R.string.cleaner_browser_switch_env),
+                    summary = stringResource(R.string.cleaner_browser_switch_env_tips),
+                )
+                SwitchPreference(
+                    key = Preferences.Browser.BLOCK_UPDATE,
+                    title = stringResource(R.string.cleaner_browser_disable_update),
                 )
             }
         }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_remote,
-        ) {
-            SwitchPreference(
-                key = Preferences.RemoteController.AD_BLOCKER,
-                title = stringResource(R.string.cleaner_common_ad_blocker)
-            )
+
+        if (Scope.DOWNLOAD in installedPackages || Scope.DOWNLOAD_UI in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_download,
+            ) {
+                if (Scope.DOWNLOAD_UI in installedPackages) {
+                    SwitchPreference(
+                        key = Preferences.DownloadUI.HIDE_XL,
+                        title = stringResource(R.string.cleaner_downloadui_hide_xl)
+                    )
+                }
+                if (Scope.DOWNLOAD in installedPackages) {
+                    SwitchPreference(
+                        key = Preferences.Download.FUCK_XL,
+                        title = stringResource(R.string.cleaner_download_fuck_xl)
+                    )
+                }
+            }
         }
-        itemPreferenceGroup(
-            titleRes = R.string.ui_title_cleaner_themes,
-            position = ItemPosition.Last
-        ) {
-            SwitchPreference(
-                key = Preferences.Themes.SKIP_SPLASH,
-                title = stringResource(R.string.cleaner_common_skip_splash),
-                summary = stringResource(R.string.cleaner_common_skip_splash_tips)
-            )
+
+        if (Scope.IN_CALL_UI in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_incallui,
+            ) {
+                SwitchPreference(
+                    key = Preferences.InCallUI.HIDE_CRBT,
+                    title = stringResource(R.string.cleaner_incallui_hide_crbt)
+                )
+            }
+        }
+
+        if (Scope.FIND_DEVICE in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_find_device,
+            ) {
+                SwitchPreference(
+                    key = Preferences.FindDevice.FUCK_AIVS,
+                    title = stringResource(R.string.cleaner_find_device_fuck_aivs),
+                    summary = stringResource(R.string.cleaner_find_device_fuck_aivs_tips)
+                )
+            }
+        }
+
+        if (Scope.MARKET in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_market,
+            ) {
+                AppRestartPreferenceItem(
+                    packageName = Scope.MARKET,
+                    title = stringResource(R.string.cleaner_common_restart_app, stringResource(R.string.scope_market)),
+                    verifiedVersion = Version.MARKET,
+                    onFallbackAction = { onAction(CleanMasterUIAction.OpenAppDetails(Scope.MARKET)) }
+                )
+                InnerHorizontalDivider()
+                SwitchPreference(
+                    key = Preferences.Market.AD_BLOCKER,
+                    title = stringResource(R.string.cleaner_common_ad_blocker)
+                )
+                SwitchPreference(
+                    key = Preferences.Market.SKIP_SPLASH,
+                    title = stringResource(R.string.cleaner_common_skip_splash),
+                    summary = stringResource(R.string.cleaner_common_skip_splash_tips)
+                )
+                SwitchPreference(
+                    key = Preferences.Market.BLOCK_UPDATE_DIALOG,
+                    title = stringResource(R.string.cleaner_market_block_update_dailog),
+                    summary = stringResource(R.string.cleaner_market_block_update_dailog_tips)
+                )
+                SwitchPreference(
+                    key = Preferences.Market.HIDE_APP_SECURITY,
+                    title = stringResource(R.string.cleaner_market_hide_app_security),
+                    summary = stringResource(R.string.cleaner_market_hide_app_security_tips)
+                )
+                SwitchPreference(
+                    key = Preferences.Market.TAB_BLUR,
+                    title = stringResource(R.string.cleaner_market_bottom_tab_blur),
+                    summary = stringResource(R.string.cleaner_market_bottom_tab_blur_tips)
+                )
+                SwitchPreference(
+                    key = Preferences.Market.DISABLE_CUSTOMIZE_ICON,
+                    title = stringResource(R.string.cleaner_market_disable_customize_icon),
+                    summary = stringResource(R.string.cleaner_market_disable_customize_icon_tips)
+                )
+                TextPreference(
+                    title = stringResource(R.string.cleaner_market_filter_tab),
+                    summary = stringResource(R.string.cleaner_market_filter_tab_tips),
+                    value = stringResource(if (isMarketFilterTabOn) R.string.common_on else R.string.common_off),
+                    onClick = { onAction(CleanMasterUIAction.OpenMarketFilterSheet) }
+                )
+            }
+        }
+
+        if (Scope.MI_LINK in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_milink,
+            ) {
+                SwitchPreference(
+                    key = Preferences.MiLink.FUCK_HPPLAY,
+                    title = stringResource(R.string.cleaner_milink_fuck_hpplay)
+                )
+            }
+        }
+
+        if (Scope.MMS in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_mms
+            ) {
+                SwitchPreference(
+                    key = Preferences.MMS.AD_BLOCKER,
+                    title = stringResource(R.string.cleaner_common_ad_blocker)
+                )
+            }
+        }
+
+        if (Scope.MUSIC in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_music,
+            ) {
+                AppRestartPreferenceItem(
+                    packageName = Scope.MUSIC,
+                    title = stringResource(R.string.cleaner_common_restart_app, stringResource(R.string.scope_music)),
+                    verifiedVersion = Version.MUSIC,
+                    onFallbackAction = { onAction(CleanMasterUIAction.OpenAppDetails(Scope.MUSIC)) }
+                )
+                InnerHorizontalDivider()
+                SwitchPreference(
+                    key = Preferences.Music.AD_BLOCKER,
+                    title = stringResource(R.string.cleaner_common_ad_blocker)
+                )
+                SwitchPreference(
+                    key = Preferences.Music.SKIP_SPLASH,
+                    title = stringResource(R.string.cleaner_common_skip_splash),
+                    summary = stringResource(R.string.cleaner_common_skip_splash_tips)
+                )
+                SwitchPreference(
+                    key = Preferences.Music.HIDE_TAB_LONG_AUDIO,
+                    title = stringResource(R.string.cleaner_music_hide_tab_long_audio),
+                    summary = stringResource(R.string.cleaner_music_hide_tab_long_audio_tips)
+                )
+                SwitchPreference(
+                    key = Preferences.Music.HIDE_TAB_QUICK_PLAY,
+                    title = stringResource(R.string.cleaner_music_hide_tab_quick_play),
+                    summary = stringResource(R.string.cleaner_music_hide_tab_quick_play_tips)
+                )
+                SwitchPreference(
+                    key = Preferences.Music.HIDE_TAB_FREE_MODE,
+                    title = stringResource(R.string.cleaner_music_hide_tab_free_mode),
+                    summary = stringResource(R.string.cleaner_music_hide_tab_free_mode_tips)
+                )
+                SwitchPreference(
+                    key = Preferences.Music.HIDE_MY_BANNER,
+                    title = stringResource(R.string.cleaner_music_hide_my_banner)
+                )
+                SwitchPreference(
+                    key = Preferences.Music.HIDE_MY_REC_PLAYLIST,
+                    title = stringResource(R.string.cleaner_music_hide_my_rec_playlist)
+                )
+                SwitchPreference(
+                    key = Preferences.Music.HIDE_FAV_NUM,
+                    title = stringResource(R.string.cleaner_music_hide_fav_num),
+                    summary = stringResource(R.string.cleaner_music_hide_fav_num_tips)
+                )
+                SwitchPreference(
+                    key = Preferences.Music.HIDE_LISTEN_COUNT,
+                    title = stringResource(R.string.cleaner_music_hide_listen_count),
+                    summary = stringResource(R.string.cleaner_music_hide_listen_count_tips)
+                )
+            }
+        }
+
+        if (Scope.PACKAGE_INSTALLER in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_package,
+            ) {
+                AppRestartPreferenceItem(
+                    packageName = Scope.PACKAGE_INSTALLER,
+                    title = stringResource(R.string.cleaner_common_restart_app, stringResource(R.string.scope_package_installer)),
+                    verifiedVersion = Version.PACKAGE_INSTALLER,
+                    onFallbackAction = { onAction(CleanMasterUIAction.OpenAppDetails(Scope.PACKAGE_INSTALLER)) }
+                )
+                InnerHorizontalDivider()
+                SwitchPreference(
+                    key = Preferences.PackageInstaller.REMOVE_ELEMENT,
+                    title = stringResource(R.string.cleaner_package_remove_element)
+                )
+                SwitchPreference(
+                    key = Preferences.PackageInstaller.DISABLE_RISK_CHECK,
+                    title = stringResource(R.string.cleaner_package_skip_risk_check)
+                )
+                SwitchPreference(
+                    key = Preferences.PackageInstaller.DISGUISE_NO_NETWORK,
+                    title = stringResource(R.string.cleaner_package_no_network)
+                )
+                SwitchPreference(
+                    key = Preferences.PackageInstaller.DISABLE_COUNT_CHECK,
+                    title = stringResource(R.string.cleaner_package_no_count_check)
+                )
+                SwitchPreference(
+                    key = Preferences.PackageInstaller.BLOCK_UPLOAD_INFO,
+                    title = stringResource(R.string.cleaner_package_block_upload_app_info)
+                )
+                val installSource = rememberPreferenceState(Preferences.PackageInstaller.CUSTOM_INSTALL_SOURCE)
+                DropDownPreference(
+                    title = stringResource(R.string.cleaner_package_install_source),
+                    summary = stringResource(R.string.cleaner_package_install_source_tips),
+                    options = customInstallSourceOptions,
+                    value = installSource.value,
+                    onValueChange = { installSource.value = it }
+                )
+                AnimatedVisibility(installSource.value == 3) {
+                    val customPkgName = rememberPreferenceState(Preferences.PackageInstaller.INSTALL_SOURCE_PKG)
+                    EditTextPreference(
+                        title = stringResource(R.string.cleaner_package_custom_install_source),
+                        text = customPkgName.value,
+                        valuePosition = ValuePosition.Summary,
+                        onTextChange = {
+                            if (it.matches(PackageNameRegex)) customPkgName.value = it
+                        }
+                    )
+                }
+            }
+        }
+
+        if (Scope.REMOTE_CONTROLLER in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_remote,
+            ) {
+                SwitchPreference(
+                    key = Preferences.RemoteController.AD_BLOCKER,
+                    title = stringResource(R.string.cleaner_common_ad_blocker)
+                )
+            }
+        }
+
+        if (Scope.THEMES in installedPackages) {
+            itemPreferenceGroup(
+                titleRes = R.string.ui_title_cleaner_themes,
+                position = ItemPosition.Last
+            ) {
+                SwitchPreference(
+                    key = Preferences.Themes.SKIP_SPLASH,
+                    title = stringResource(R.string.cleaner_common_skip_splash),
+                    summary = stringResource(R.string.cleaner_common_skip_splash_tips)
+                )
+            }
         }
     }
 }

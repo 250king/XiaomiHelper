@@ -26,6 +26,7 @@ import dev.lackluster.mihelper.app.state.UiText
 import dev.lackluster.mihelper.app.utils.showToast
 import dev.lackluster.mihelper.app.utils.toUiText
 import dev.lackluster.mihelper.data.Scope
+import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.data.preference.Preferences
 import org.koin.androidx.compose.koinViewModel
 
@@ -192,6 +193,51 @@ private fun SystemFrameworkPageContent(
                 key = Preferences.System.DISABLE_FORCE_DARK_WHITELIST,
                 title = stringResource(R.string.android_others_force_dark),
                 summary = stringResource(R.string.android_others_force_dark_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.ALLOW_SCREENSHOT,
+                title = stringResource(R.string.android_parity_allow_screenshot),
+                summary = stringResource(R.string.android_parity_allow_screenshot_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.DISABLE_DEVICE_NAME_CHECK,
+                title = stringResource(R.string.android_parity_disable_device_name_check),
+                summary = stringResource(R.string.android_parity_disable_device_name_check_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.ALLOW_THIRD_PARTY_THEME,
+                title = stringResource(R.string.android_parity_allow_third_party_theme),
+                summary = stringResource(R.string.android_parity_allow_third_party_theme_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.HIDE_BLUETOOTH_UNLOCK_TOAST,
+                title = stringResource(R.string.android_parity_hide_bluetooth_unlock_toast),
+                summary = stringResource(R.string.android_parity_hide_bluetooth_unlock_toast_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.DISABLE_ROAMING_SIM_ACTIVATION,
+                title = stringResource(R.string.android_parity_disable_roaming_sim_activation),
+                summary = stringResource(R.string.android_parity_disable_roaming_sim_activation_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.DISABLE_ROAMING_SIM_ACTIVATION_RADICAL,
+                title = stringResource(R.string.android_parity_disable_roaming_sim_activation_radical),
+                summary = stringResource(R.string.android_parity_disable_roaming_sim_activation_radical_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.DISABLE_APP_LINK_VERIFY,
+                title = stringResource(R.string.android_parity_disable_app_link_verify),
+                summary = stringResource(R.string.android_parity_disable_app_link_verify_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.REDIRECT_XIAOMI_BROWSER,
+                title = stringResource(R.string.android_parity_redirect_xiaomi_browser),
+                summary = stringResource(R.string.android_parity_redirect_xiaomi_browser_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.FIX_HYPEROS_PASSKEY,
+                title = stringResource(R.string.android_parity_fix_hyperos_passkey),
+                summary = stringResource(R.string.android_parity_fix_hyperos_passkey_tips),
             )
         }
     }

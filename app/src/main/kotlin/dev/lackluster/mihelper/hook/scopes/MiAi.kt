@@ -6,6 +6,7 @@ import dev.lackluster.mihelper.hook.rules.miai.CustomSearch
 import dev.lackluster.mihelper.hook.rules.miai.HideWatermark
 import dev.lackluster.mihelper.hook.rules.miai.RearScreenPin
 import dev.lackluster.mihelper.hook.rules.shared.FuckAIVS
+import dev.lackluster.mihelper.hook.rules.shared.XiaomiBrowserRedirect
 
 object MiAi : StaticHooker() {
     private val fuckAIVS by lazy { FuckAIVS(Preferences.MiAi.FUCK_AIVS) }
@@ -17,5 +18,6 @@ object MiAi : StaticHooker() {
         attach(HideWatermark)
         attach(RearScreenPin)
         attach(fuckAIVS)
+        attach(XiaomiBrowserRedirect)
     }
 }

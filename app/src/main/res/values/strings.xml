@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Hyper Helper</string>
     <string name="xposed_desc">Make HyperOS Great Again!</string>
     <string name="common_default">Default</string>
@@ -483,6 +483,8 @@
     <string name="security_lbe_block_remove_auto_start_tips">Prevents the system from removing the auto-start permission from apps</string>
     <string name="security_lbe_clipboard_toast">Use toast to show clipboard read prompts</string>
     <string name="security_lbe_clipboard_toast_tips">Using toast allows the element behind the prompt to be clickable</string>
+    <string name="security_lbe_hide_clipboard_toast" tools:ignore="MissingTranslation">Hide clipboard read prompts</string>
+    <string name="security_lbe_hide_clipboard_toast_tips" tools:ignore="MissingTranslation">Takes priority over the toast option above and suppresses both LBE prompts and the system clipboard-access toast</string>
     <string name="ui_title_security_mi_trust_service" translatable="false">@string/scope_mi_trust</string>
     <string name="mi_trust_disable_risk_check" translatable="false">@string/cleaner_package_skip_risk_check</string>
     <string name="security_power_unlock_custom_refresh">Unlock Apps using high refresh rate</string>
@@ -930,4 +932,22 @@
     <string name="media_elm_prog_comet_tips">A progress bar with a fading transparency effect, like a comet trailing a small tail.</string>
     <string name="media_hint_ambient_lighting">The ambient light effect requires high performance and resource usage, which may cause issues such as device overheating. Please enable with caution. If any problems occur, it is recommended to disable this feature.</string>
     <string name="media_hint_advanced_textures">Since Advanced textures have been set as the default background for media controls, the corresponding option has been removed. If you need to adjust the effects of Advanced textures, use a Magisk module or the system theme to modify the blur parameters.</string>
+    <string name="android_parity_allow_screenshot" tools:ignore="MissingTranslation">Allow screenshots in secure apps</string>
+    <string name="android_parity_allow_screenshot_tips" tools:ignore="MissingTranslation">Allow screenshots, screen recording and screen sharing to include windows protected by FLAG_SECURE.</string>
+    <string name="android_parity_disable_device_name_check" tools:ignore="MissingTranslation">Disable device-name sensitive-word check</string>
+    <string name="android_parity_disable_device_name_check_tips" tools:ignore="MissingTranslation">Applies to device, hotspot, Wi-Fi Direct and Bluetooth name validation.</string>
+    <string name="android_parity_allow_third_party_theme" tools:ignore="MissingTranslation">Allow third-party themes</string>
+    <string name="android_parity_allow_third_party_theme_tips" tools:ignore="MissingTranslation">Bypass theme DRM only while the system or Theme Manager validates a theme.</string>
+    <string name="android_parity_hide_bluetooth_unlock_toast" tools:ignore="MissingTranslation">Hide Bluetooth unlock toast</string>
+    <string name="android_parity_hide_bluetooth_unlock_toast_tips" tools:ignore="MissingTranslation">Suppress only the SystemUI toast shown after a Bluetooth-device unlock.</string>
+    <string name="android_parity_disable_roaming_sim_activation" tools:ignore="MissingTranslation">Disable SIM activation while roaming</string>
+    <string name="android_parity_disable_roaming_sim_activation_tips" tools:ignore="MissingTranslation">Skip Xiaomi activation tasks and receivers for a mainland-China SIM while it is roaming.</string>
+    <string name="android_parity_disable_roaming_sim_activation_radical" tools:ignore="MissingTranslation">Use aggressive roaming detection</string>
+    <string name="android_parity_disable_roaming_sim_activation_radical_tips" tools:ignore="MissingTranslation">Also block activation when the service cannot read a phone number, ICCID or roaming state.</string>
+    <string name="android_parity_disable_app_link_verify" tools:ignore="MissingTranslation">Disable app-link verification</string>
+    <string name="android_parity_disable_app_link_verify_tips" tools:ignore="MissingTranslation">Let supported third-party apps appear when opening web links without manually approving every domain in app settings.</string>
+    <string name="android_parity_redirect_xiaomi_browser" tools:ignore="MissingTranslation">Use default browser for Xiaomi links</string>
+    <string name="android_parity_redirect_xiaomi_browser_tips" tools:ignore="MissingTranslation">Restore web links forced into Xiaomi Browser or its Market download page and open them with the system default browser.</string>
+    <string name="android_parity_fix_hyperos_passkey" tools:ignore="MissingTranslation">Fix HyperOS passkeys</string>
+    <string name="android_parity_fix_hyperos_passkey_tips" tools:ignore="MissingTranslation">Restore Credential Manager and passkey integration on CN HyperOS. Preinstalled Google Basic Services must be enabled.</string>
 </resources>

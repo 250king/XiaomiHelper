@@ -5,6 +5,7 @@ import dev.lackluster.mihelper.hook.rules.securitycenter.AppDetailClickOpen
 import dev.lackluster.mihelper.hook.rules.securitycenter.DisableRiskAppNotification
 import dev.lackluster.mihelper.hook.rules.securitycenter.HideRedDot
 import dev.lackluster.mihelper.hook.rules.securitycenter.LockScore
+import dev.lackluster.mihelper.hook.rules.securitycenter.PasskeySecurityCenterFix
 import dev.lackluster.mihelper.hook.rules.securitycenter.RemoveBubbleSettingsRestriction
 import dev.lackluster.mihelper.hook.rules.securitycenter.RemoveReport
 import dev.lackluster.mihelper.hook.rules.securitycenter.ResourcesUtils
@@ -32,5 +33,6 @@ object SecurityCenter : StaticHooker() {
         attach(SkipSplash)
         attach(HideRedDot)
         attach(HideHomeElement)
+        attach(PasskeySecurityCenterFix)
     }
 }

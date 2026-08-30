@@ -12,6 +12,7 @@ import dev.lackluster.hyperx.ui.preference.core.rememberPreferenceState
 import dev.lackluster.mihelper.app.widget.preference.DropDownOption
 import dev.lackluster.mihelper.app.widget.preference.DropDownPreference
 import dev.lackluster.mihelper.data.preference.Preferences
+import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.utils.Device
 
 private val chainStartOptions = listOf(
@@ -140,6 +141,11 @@ fun SecurityCenterPage() {
                 key = Preferences.LBE.TOAST_CLIPBOARD_USAGE,
                 title = stringResource(R.string.security_lbe_clipboard_toast),
                 summary = stringResource(R.string.security_lbe_clipboard_toast_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.HIDE_CLIPBOARD_USAGE_TOAST,
+                title = stringResource(R.string.security_lbe_hide_clipboard_toast),
+                summary = stringResource(R.string.security_lbe_hide_clipboard_toast_tips),
             )
         }
         itemPreferenceGroup(

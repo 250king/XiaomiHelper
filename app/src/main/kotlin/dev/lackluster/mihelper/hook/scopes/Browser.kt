@@ -10,6 +10,7 @@ import dev.lackluster.mihelper.hook.rules.browser.FixBackHandler
 import dev.lackluster.mihelper.hook.rules.browser.HideHomepageTopBar
 import dev.lackluster.mihelper.hook.rules.browser.SkipSplash
 import dev.lackluster.mihelper.hook.rules.browser.SwitchEnv
+import dev.lackluster.mihelper.hook.rules.shared.XiaomiBrowserRedirect
 
 object Browser : StaticHooker() {
     override val requireDexKit: Boolean = true
@@ -24,5 +25,6 @@ object Browser : StaticHooker() {
         attach(BlockDialog)
         attach(HideHomepageTopBar)
         attach(FixBackHandler)
+        attach(XiaomiBrowserRedirect)
     }
 }

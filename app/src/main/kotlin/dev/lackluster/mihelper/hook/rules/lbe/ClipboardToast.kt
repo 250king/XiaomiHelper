@@ -24,6 +24,7 @@ import android.content.Context
 import android.widget.Toast
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import dev.lackluster.mihelper.data.Scope
+import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.data.preference.Preferences
 import dev.lackluster.mihelper.hook.base.StaticHooker
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
@@ -31,41 +32,55 @@ import dev.lackluster.mihelper.hook.utils.toTyped
 import dev.lackluster.mihelper.utils.factory.getResId
 
 object ClipboardToast : StaticHooker() {
-    private var overlay_read_clip_toast = 0
+    private var overlayReadClipboardToast = 0
+    private var useToast = false
+    private var hideToast = false
 
     override fun onInit() {
-        updateSelfState(Preferences.LBE.TOAST_CLIPBOARD_USAGE.get())
+        useToast = Preferences.LBE.TOAST_CLIPBOARD_USAGE.get()
+        hideToast = ParityPreferences.HIDE_CLIPBOARD_USAGE_TOAST.get()
+        updateSelfState(useToast || hideToast)
     }
 
     override fun onHook() {
         "com.lbe.security.utility.ToastUtil".toClassOrNull()?.apply {
-            val mContext = resolve().firstFieldOrNull {
+            val contextField = resolve().firstFieldOrNull {
                 name = "mContext"
             }?.toTyped<Context>()
             resolve().firstMethodOrNull {
                 name = "initToastView"
             }?.hook {
-                val type = getArg(1) as? Int
-                if (type == 1) {
-                    val context = mContext?.get(thisObject)
-                    val pkgName = getArg(0) as? String
-                    if (context != null && pkgName != null) {
-                        if (overlay_read_clip_toast == 0) {
-                            overlay_read_clip_toast = context.getResId("overlay_read_clip_toast", "string", Scope.LBE)
-                        }
-                        context.packageManager.let {
-                            it.getPackageInfo(pkgName, 0).applicationInfo?.loadLabel(it)?.toString()
-                        }?.let {
-                            Toast.makeText(
-                                context,
-                                context.getString(overlay_read_clip_toast, it),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            return@hook result(null)
-                        }
-                    }
+                if ((getArg(1) as? Int) != 1) return@hook result(proceed())
+                if (hideToast) return@hook result(null)
+                if (!useToast) return@hook result(proceed())
+
+                val context = contextField?.get(thisObject)
+                val packageName = getArg(0) as? String
+                if (context == null || packageName.isNullOrBlank()) {
+                    return@hook result(proceed())
                 }
-                result(proceed())
+
+                if (overlayReadClipboardToast == 0) {
+                    overlayReadClipboardToast = context.getResId(
+                        "overlay_read_clip_toast",
+                        "string",
+                        Scope.LBE,
+                    )
+                }
+                val appLabel = runCatching {
+                    val packageManager = context.packageManager
+                    packageManager.getApplicationInfo(packageName, 0)
+                        .loadLabel(packageManager)
+                        .toString()
+                }.getOrNull() ?: return@hook result(proceed())
+                if (overlayReadClipboardToast == 0) return@hook result(proceed())
+
+                Toast.makeText(
+                    context,
+                    context.getString(overlayReadClipboardToast, appLabel),
+                    Toast.LENGTH_SHORT,
+                ).show()
+                result(null)
             }
         }
     }
