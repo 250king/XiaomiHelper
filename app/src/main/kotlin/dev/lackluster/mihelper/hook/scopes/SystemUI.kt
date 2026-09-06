@@ -21,6 +21,7 @@ import dev.lackluster.mihelper.hook.rules.systemui.media.UnlockCustomAction
 import dev.lackluster.mihelper.hook.rules.systemui.notif.ExpandNotification
 import dev.lackluster.mihelper.hook.rules.systemui.notif.LayoutAndRankOpt
 import dev.lackluster.mihelper.hook.rules.systemui.notif.MiuiXExpandButton
+import dev.lackluster.mihelper.hook.rules.systemui.notif.MoreNotificationSettingsSystemUI
 import dev.lackluster.mihelper.hook.rules.systemui.notif.NotifFreeform
 import dev.lackluster.mihelper.hook.rules.systemui.notif.NotifWhitelist
 import dev.lackluster.mihelper.hook.rules.systemui.plugin.PluginFactory
@@ -36,7 +37,6 @@ import dev.lackluster.mihelper.hook.rules.systemui.statusbar.CompoundIcon
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.MiuiClock
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.MiuiClockFontWeight
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.NetworkSpeed
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.WifiIcon
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.NotificationMaxNumber
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.RegionSampling
 import dev.lackluster.mihelper.hook.rules.systemui.mobile.StackedMobileIcon
@@ -73,6 +73,7 @@ object SystemUI : StaticHooker() {
         attach(ExpandNotification)
         attach(LayoutAndRankOpt)
         attach(SuppressFold)
+        attach(MoreNotificationSettingsSystemUI)
 
         attach(BatteryIndicator)
         attach(BatteryIndicatorStyle)

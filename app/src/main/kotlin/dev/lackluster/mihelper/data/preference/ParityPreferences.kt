@@ -17,4 +17,6 @@ object ParityPreferences {
     val DISABLE_APP_LINK_VERIFY = PreferenceKey("parity_disable_app_link_verify", false)
     val REDIRECT_XIAOMI_BROWSER = PreferenceKey("parity_redirect_xiaomi_browser", false)
     val FIX_HYPEROS_PASSKEY = PreferenceKey("parity_fix_hyperos_passkey", false)
+    val MORE_NOTIFICATION_SETTINGS = PreferenceKey("parity_more_notification_settings", false)
+    val ALLOW_DISABLE_APPS = PreferenceKey("parity_allow_disable_apps", false)
 }

@@ -1,6 +1,7 @@
 package dev.lackluster.mihelper.hook.scopes
 
 import dev.lackluster.mihelper.hook.base.StaticHooker
+import dev.lackluster.mihelper.hook.rules.securitycenter.AllowDisableApps
 import dev.lackluster.mihelper.hook.rules.securitycenter.AppDetailClickOpen
 import dev.lackluster.mihelper.hook.rules.securitycenter.DisableRiskAppNotification
 import dev.lackluster.mihelper.hook.rules.securitycenter.HideRedDot
@@ -34,5 +35,6 @@ object SecurityCenter : StaticHooker() {
         attach(HideRedDot)
         attach(HideHomeElement)
         attach(PasskeySecurityCenterFix)
+        attach(AllowDisableApps)
     }
 }

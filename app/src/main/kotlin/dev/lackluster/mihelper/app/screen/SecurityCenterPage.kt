@@ -68,6 +68,11 @@ fun SecurityCenterPage() {
                 title = stringResource(R.string.security_security_icon_open),
             )
             SwitchPreference(
+                key = ParityPreferences.ALLOW_DISABLE_APPS,
+                title = stringResource(R.string.security_parity_allow_disable_apps),
+                summary = stringResource(R.string.security_parity_allow_disable_apps_tips),
+            )
+            SwitchPreference(
                 key = Preferences.SecurityCenter.CTRL_SYSTEM_APP_WIFI,
                 title = stringResource(R.string.security_security_system_app_wifi),
             )

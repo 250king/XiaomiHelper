@@ -239,6 +239,11 @@ private fun SystemFrameworkPageContent(
                 title = stringResource(R.string.android_parity_fix_hyperos_passkey),
                 summary = stringResource(R.string.android_parity_fix_hyperos_passkey_tips),
             )
+            SwitchPreference(
+                key = ParityPreferences.MORE_NOTIFICATION_SETTINGS,
+                title = stringResource(R.string.android_parity_more_notification_settings),
+                summary = stringResource(R.string.android_parity_more_notification_settings_tips),
+            )
         }
     }
 }
