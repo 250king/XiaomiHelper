@@ -121,6 +121,11 @@ fun SecurityCenterPage() {
                 key = Preferences.SecurityCenter.REMOVE_REPORT,
                 title = stringResource(R.string.security_cleaner_remove_report),
             )
+            SwitchPreference(
+                key = ParityPreferences.DISABLE_WALLET_PROMOTION,
+                title = stringResource(R.string.security_parity_disable_wallet_promotion),
+                summary = stringResource(R.string.security_parity_disable_wallet_promotion_tips),
+            )
         }
         itemPreferenceGroup(
             titleRes = R.string.ui_title_security_guard,

@@ -38,6 +38,7 @@ import dev.lackluster.mihelper.hook.scopes.Scanner
 import dev.lackluster.mihelper.hook.scopes.Settings
 import dev.lackluster.mihelper.hook.scopes.SimActivate
 import dev.lackluster.mihelper.hook.scopes.SystemUIPlugin
+import dev.lackluster.mihelper.hook.scopes.Wallet
 import dev.lackluster.mihelper.hook.utils.RemotePreferences
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.get
 import dev.lackluster.mihelper.hook.utils.RemotePreferences.observe
@@ -130,6 +131,7 @@ class HookEntry : XposedModule() {
         Scope.THEMES -> Themes
         Scope.UPDATER -> Updater
         Scope.SIM_ACTIVATE -> SimActivate
+        Scope.WALLET -> Wallet
         else -> null
     }
 

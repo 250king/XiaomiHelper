@@ -19,4 +19,5 @@ object ParityPreferences {
     val FIX_HYPEROS_PASSKEY = PreferenceKey("parity_fix_hyperos_passkey", false)
     val MORE_NOTIFICATION_SETTINGS = PreferenceKey("parity_more_notification_settings", false)
     val ALLOW_DISABLE_APPS = PreferenceKey("parity_allow_disable_apps", false)
+    val DISABLE_WALLET_PROMOTION = PreferenceKey("parity_disable_wallet_promotion", false)
 }

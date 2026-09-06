@@ -37,6 +37,7 @@ object Scope {
     const val TAPLUS = "com.miui.contentextension"
     const val THEMES = "com.android.thememanager"
     const val UPDATER = "com.android.updater"
+    const val WALLET = "com.mipay.wallet"
 }
 
 object Version {

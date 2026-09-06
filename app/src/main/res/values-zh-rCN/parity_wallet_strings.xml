@@ -1,0 +1,4 @@
+<resources>
+    <string name="security_parity_disable_wallet_promotion">屏蔽小米钱包推广</string>
+    <string name="security_parity_disable_wallet_promotion_tips">隐藏小米钱包启动页推广，并阻止启动广告数据加载。</string>
+</resources>
