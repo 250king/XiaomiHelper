@@ -1,0 +1,4 @@
+<resources>
+    <string name="security_parity_disable_wallet_promotion">Block Xiaomi Wallet promotions</string>
+    <string name="security_parity_disable_wallet_promotion_tips">Hide Xiaomi Wallet splash promotions and suppress splash ad loading.</string>
+</resources>

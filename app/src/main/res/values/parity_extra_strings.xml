@@ -1,0 +1,6 @@
+<resources>
+    <string name="android_parity_more_notification_settings">More notification settings</string>
+    <string name="android_parity_more_notification_settings_tips">Expose hidden notification-channel controls such as importance, badges and lock-screen display, and open the exact channel settings from notifications. Restart Settings and System UI after changing.</string>
+    <string name="security_parity_allow_disable_apps">Allow disabling apps</string>
+    <string name="security_parity_allow_disable_apps_tips">Add an Enable/Disable action to Security app details. Core permission and package-installer components remain protected.</string>
+</resources>

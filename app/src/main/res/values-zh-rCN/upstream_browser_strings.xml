@@ -1,0 +1,4 @@
+<resources>
+    <string name="cleaner_browser_hide_voice_button">隐藏语音输入按钮</string>
+    <string name="cleaner_browser_hide_voice_button_tips">隐藏搜索页的“按住说话”按钮</string>
+</resources>

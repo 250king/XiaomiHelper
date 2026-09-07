@@ -1,0 +1,4 @@
+<resources>
+    <string name="cleaner_browser_hide_voice_button">Hide voice input button</string>
+    <string name="cleaner_browser_hide_voice_button_tips">Hide the \"Hold to speak\" button on the search page</string>
+</resources>

@@ -12,6 +12,7 @@ import dev.lackluster.hyperx.ui.preference.core.rememberPreferenceState
 import dev.lackluster.mihelper.app.widget.preference.DropDownOption
 import dev.lackluster.mihelper.app.widget.preference.DropDownPreference
 import dev.lackluster.mihelper.data.preference.Preferences
+import dev.lackluster.mihelper.data.preference.ParityPreferences
 import dev.lackluster.mihelper.utils.Device
 
 private val chainStartOptions = listOf(
@@ -67,6 +68,11 @@ fun SecurityCenterPage() {
                 title = stringResource(R.string.security_security_icon_open),
             )
             SwitchPreference(
+                key = ParityPreferences.ALLOW_DISABLE_APPS,
+                title = stringResource(R.string.security_parity_allow_disable_apps),
+                summary = stringResource(R.string.security_parity_allow_disable_apps_tips),
+            )
+            SwitchPreference(
                 key = Preferences.SecurityCenter.CTRL_SYSTEM_APP_WIFI,
                 title = stringResource(R.string.security_security_system_app_wifi),
             )
@@ -115,6 +121,11 @@ fun SecurityCenterPage() {
                 key = Preferences.SecurityCenter.REMOVE_REPORT,
                 title = stringResource(R.string.security_cleaner_remove_report),
             )
+            SwitchPreference(
+                key = ParityPreferences.DISABLE_WALLET_PROMOTION,
+                title = stringResource(R.string.security_parity_disable_wallet_promotion),
+                summary = stringResource(R.string.security_parity_disable_wallet_promotion_tips),
+            )
         }
         itemPreferenceGroup(
             titleRes = R.string.ui_title_security_guard,
@@ -140,6 +151,11 @@ fun SecurityCenterPage() {
                 key = Preferences.LBE.TOAST_CLIPBOARD_USAGE,
                 title = stringResource(R.string.security_lbe_clipboard_toast),
                 summary = stringResource(R.string.security_lbe_clipboard_toast_tips),
+            )
+            SwitchPreference(
+                key = ParityPreferences.HIDE_CLIPBOARD_USAGE_TOAST,
+                title = stringResource(R.string.security_lbe_hide_clipboard_toast),
+                summary = stringResource(R.string.security_lbe_hide_clipboard_toast_tips),
             )
         }
         itemPreferenceGroup(

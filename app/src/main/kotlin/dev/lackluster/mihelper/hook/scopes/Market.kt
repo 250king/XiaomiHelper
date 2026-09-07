@@ -7,6 +7,7 @@ import dev.lackluster.mihelper.hook.rules.market.DisableCustomizeIcon
 import dev.lackluster.mihelper.hook.rules.market.HideAppSecurity
 import dev.lackluster.mihelper.hook.rules.market.HideTabItem
 import dev.lackluster.mihelper.hook.rules.market.SkipSplash
+import dev.lackluster.mihelper.hook.rules.shared.XiaomiBrowserRedirect
 
 object Market : StaticHooker() {
     override fun onInit() {
@@ -16,5 +17,6 @@ object Market : StaticHooker() {
         attach(HideAppSecurity)
         attach(HideTabItem)
         attach(SkipSplash)
+        attach(XiaomiBrowserRedirect)
     }
 }

@@ -1,0 +1,6 @@
+<resources>
+    <string name="android_parity_more_notification_settings">更多通知设置</string>
+    <string name="android_parity_more_notification_settings_tips">显示通知渠道中被 HyperOS 隐藏的重要程度、角标和锁屏显示等选项，并可从通知直接进入对应渠道设置。修改后请重启“设置”和“系统界面”。</string>
+    <string name="security_parity_allow_disable_apps">允许禁用应用</string>
+    <string name="security_parity_allow_disable_apps_tips">在手机管家的应用详情中增加“启用/禁用”操作；权限管理和软件包安装程序等核心组件仍保持保护。</string>
+</resources>

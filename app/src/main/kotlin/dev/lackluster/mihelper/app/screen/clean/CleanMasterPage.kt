@@ -117,6 +117,11 @@ private fun CleanMasterPageContent(
                 summary = stringResource(R.string.cleaner_browser_hide_homepage_topbar_tips),
             )
             SwitchPreference(
+                key = Preferences.Browser.HIDE_VOICE_BUTTON,
+                title = stringResource(R.string.cleaner_browser_hide_voice_button),
+                summary = stringResource(R.string.cleaner_browser_hide_voice_button_tips),
+            )
+            SwitchPreference(
                 key = Preferences.Browser.BLOCK_DIALOG,
                 title = stringResource(R.string.cleaner_browser_block_dialog),
                 summary = stringResource(R.string.cleaner_browser_block_dialog_tips),

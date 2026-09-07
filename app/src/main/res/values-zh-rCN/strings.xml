@@ -409,6 +409,8 @@
     <string name="security_lbe_block_remove_auto_start_tips">阻止系统自动关闭应用的自启动权限</string>
     <string name="security_lbe_clipboard_toast">使用 Toast 显示剪贴板读取提示</string>
     <string name="security_lbe_clipboard_toast_tips">使用 Toast 会让提示背后的元素仍能点击</string>
+    <string name="security_lbe_hide_clipboard_toast">隐藏剪贴板读取提示</string>
+    <string name="security_lbe_hide_clipboard_toast_tips">优先于上方的 Toast 选项，同时隐藏 LBE 提示与系统剪贴板读取 Toast</string>
     <string name="security_lbe_block_remove_auto_start">阻止关闭自启动权限</string>
     <string name="security_guard_block_env_check">禁用环境检查</string>
     <string name="others_search_custom_title_zh_cn">中文（中华人民共和国）</string>
@@ -783,4 +785,22 @@
     <string name="others_taplus_xiaoai_integration_tips">触发时显示超级小爱卡片，并在文本和图像识别面板增加“贴背屏”入口</string>
     <string name="others_taplus_rear_screen">背屏</string>
     <string name="others_taplus_xiaoai_integration">超级小爱集成</string>
+    <string name="android_parity_allow_screenshot">允许在安全应用中截屏</string>
+    <string name="android_parity_allow_screenshot_tips">允许截屏、录屏和屏幕共享包含受 FLAG_SECURE 保护的窗口。</string>
+    <string name="android_parity_disable_device_name_check">关闭设备名称敏感词检查</string>
+    <string name="android_parity_disable_device_name_check_tips">作用于设备、热点、Wi-Fi 直连和蓝牙名称校验。</string>
+    <string name="android_parity_allow_third_party_theme">允许第三方主题</string>
+    <string name="android_parity_allow_third_party_theme_tips">仅在系统或主题壁纸校验主题时绕过 DRM 检查。</string>
+    <string name="android_parity_hide_bluetooth_unlock_toast">隐藏蓝牙设备解锁提示</string>
+    <string name="android_parity_hide_bluetooth_unlock_toast_tips">仅隐藏蓝牙设备解锁成功后由系统界面显示的 Toast。</string>
+    <string name="android_parity_disable_roaming_sim_activation">漫游时停止 SIM 卡激活</string>
+    <string name="android_parity_disable_roaming_sim_activation_tips">中国大陆 SIM 卡漫游时跳过小米激活任务和相关广播接收器。</string>
+    <string name="android_parity_disable_roaming_sim_activation_radical">使用更激进的漫游过滤</string>
+    <string name="android_parity_disable_roaming_sim_activation_radical_tips">无法读取手机号码、ICCID 或漫游状态时也阻止激活。</string>
+    <string name="android_parity_disable_app_link_verify">禁用应用链接验证</string>
+    <string name="android_parity_disable_app_link_verify_tips">打开网页链接时恢复显示支持该链接的第三方应用，无需在应用设置中逐个批准域名。</string>
+    <string name="android_parity_redirect_xiaomi_browser">小米链接使用默认浏览器</string>
+    <string name="android_parity_redirect_xiaomi_browser_tips">恢复被强制改成小米浏览器或应用商店下载页的网页链接，并交给系统默认浏览器打开。</string>
+    <string name="android_parity_fix_hyperos_passkey">修复澎湃系统通行密钥</string>
+    <string name="android_parity_fix_hyperos_passkey_tips">恢复国行澎湃系统的凭据管理器和通行密钥集成；必须启用系统预置的谷歌基础服务。</string>
 </resources>
